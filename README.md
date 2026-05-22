@@ -128,7 +128,7 @@ Open http://localhost:5000 and sign up as an instructor or student.
 10. Open the bell icon — notifications appear on new assignment / grade.
 
 ## Team
+- Abdullah Kamal (23P-0668) — schema & constraints, indexes, connection layer,auth
+- Taha Rizwan (23P-0037) — views & triggers, courses, announcements, comments
+- Muhammad Uzair (23P-0620) — stored functions & migrations, assignments,quizzes, dashboard, UI
 
-- Abdullah — Database schema, triggers, views, procedures, auth
-- Taha — Courses, enrollments, announcements, comments
-- Uzair — Assignments, submissions, quizzes, file uploads, dashboard, UI
