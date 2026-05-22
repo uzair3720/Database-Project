@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Profile · LMP{% endblock %}
+{% block content %}
+{% set initials = (user.name.split()|map('first')|join('')|upper)[:2] %}
+<div class="max-w-3xl mx-auto space-y-md">
+
+  <div class="p-md rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card flex items-center gap-md">
+    <div class="w-20 h-20 rounded-full bg-primary text-on-primary flex items-center justify-center font-geist text-headline-md">{{ initials }}</div>
+    <div class="flex-1">
+      <h1 class="font-geist text-headline-md text-on-surface dark:text-inverse-on-surface">{{ user.name }}</h1>
+      <p class="font-inter text-body-md text-on-surface-variant">{{ user.email }}</p>
+      <span class="inline-block mt-base px-md py-base rounded-full bg-primary-fixed text-on-primary-fixed-variant font-geist text-label-sm uppercase">{{ user.role }}</span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-md">
+    {% if user.role == 'instructor' %}
+      {% set tiles = [('school','Courses', stats.courses),
+                      ('group','Students', stats.students),
+                      ('assignment','Assignments', stats.assignments)] %}
+    {% else %}
+      {% set tiles = [('school','Courses', stats.courses),
+                      ('upload_file','Submissions', stats.submissions),
+                      ('grade','Avg Grade', (stats.avg_grade if stats.avg_grade is not none else '—'))] %}
+    {% endif %}
+    {% for icon, label, value in tiles %}
+      <div class="p-md rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card">
+        <span class="material-symbols-outlined text-primary">{{ icon }}</span>
+        <p class="font-geist text-headline-md text-on-surface dark:text-inverse-on-surface mt-base">{{ value }}</p>
+        <p class="font-geist text-label-md text-on-surface-variant">{{ label }}</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <form action="{{ url_for('profile.edit') }}" method="post"
+        class="p-md rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card space-y-sm">
+    <h2 class="font-geist text-headline-sm text-on-surface dark:text-inverse-on-surface">Edit profile</h2>
+    <div class="space-y-base">
+      <label class="font-geist text-label-sm text-on-surface-variant block">Name</label>
+      <input name="name" value="{{ user.name }}" required
+             class="w-full px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0 outline-none font-inter text-body-md" />
+    </div>
+    <button class="px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-geist text-label-md hover:shadow-hover active:scale-[0.98] transition-all">Save</button>
+  </form>
+
+  <form action="{{ url_for('profile.change_password') }}" method="post"
+        class="p-md rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card space-y-sm">
+    <h2 class="font-geist text-headline-sm text-on-surface dark:text-inverse-on-surface">Change password</h2>
+    {% for n, label in [('current','Current password'),('new','New password'),('confirm','Confirm new password')] %}
+      <div class="space-y-base">
+        <label class="font-geist text-label-sm text-on-surface-variant block">{{ label }}</label>
+        <input type="password" name="{{ n }}" required
+               class="w-full px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0 outline-none font-inter text-body-md" />
+      </div>
+    {% endfor %}
+    <button class="px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-geist text-label-md hover:shadow-hover active:scale-[0.98] transition-all">Update password</button>
+  </form>
+</div>
+{% endblock %}

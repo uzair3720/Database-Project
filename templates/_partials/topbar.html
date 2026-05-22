@@ -1,0 +1,46 @@
+{% set initials = (session.get('name') or '?').split()|map('first')|join('')|upper %}
+<header class="w-full sticky top-0 z-30 h-20
+               bg-surface/80 dark:bg-[#1d2123]/80 backdrop-blur-md
+               border-b border-outline-variant/30
+               flex items-center justify-between px-margin-mobile md:px-margin-desktop">
+  <div class="flex items-center gap-sm flex-1">
+    <button onclick="toggleSidebar()" class="md:hidden p-2 rounded-full hover:bg-surface-container">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+    <form action="{{ url_for('search.index') }}" method="get" class="relative w-full max-w-md hidden md:block">
+      <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">search</span>
+      <input name="q" value="{{ request.args.get('q','') }}"
+             placeholder="Search courses, assignments, posts…"
+             class="w-full pl-[44px] pr-md py-base bg-surface-container-low dark:bg-inverse-surface
+                    border-none rounded-full font-inter text-body-md outline-none
+                    focus:ring-2 focus:ring-primary focus:bg-white dark:focus:bg-[#14181b] transition-all" />
+    </form>
+  </div>
+
+  <div class="flex items-center gap-xs md:gap-sm">
+    <button onclick="toggleTheme()"
+            class="p-2 rounded-full hover:bg-surface-container dark:hover:bg-inverse-surface text-on-surface-variant"
+            aria-label="Toggle theme">
+      <span class="material-symbols-outlined dark:hidden">dark_mode</span>
+      <span class="material-symbols-outlined hidden dark:inline">light_mode</span>
+    </button>
+
+    <a href="{{ url_for('notifications.index') }}"
+       class="relative p-2 rounded-full hover:bg-surface-container dark:hover:bg-inverse-surface text-on-surface-variant">
+      <span class="material-symbols-outlined">notifications</span>
+      {% if unread_notifications and unread_notifications > 0 %}
+        <span class="absolute top-1 right-1 min-w-[18px] h-[18px] px-[5px] rounded-full bg-error text-on-error text-[10px] font-bold flex items-center justify-center">
+          {{ unread_notifications if unread_notifications < 100 else '99+' }}
+        </span>
+      {% endif %}
+    </a>
+
+    <a href="{{ url_for('profile.index') }}"
+       class="h-10 w-10 rounded-full bg-primary text-on-primary
+              flex items-center justify-center font-geist text-label-md
+              border-2 border-primary-fixed-dim hover:scale-105 transition-transform"
+       title="{{ session.get('name') }} ({{ session.get('role') }})">
+      {{ initials[:2] }}
+    </a>
+  </div>
+</header>

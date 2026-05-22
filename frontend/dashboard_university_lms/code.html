@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UniLMS Premium - Dashboard</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#e0e3e5",
+                        "on-tertiary-fixed": "#07006c",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#d8dadc",
+                        "background": "#f7f9fb",
+                        "tertiary-fixed": "#e1e0ff",
+                        "error-container": "#ffdad6",
+                        "secondary": "#006c49",
+                        "on-tertiary-container": "#f1eeff",
+                        "outline-variant": "#c3c6d7",
+                        "surface-container-low": "#f2f4f6",
+                        "primary-container": "#2563eb",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "inverse-surface": "#2d3133",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "on-tertiary-fixed-variant": "#2f2ebe",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "surface-container": "#eceef0",
+                        "secondary-container": "#6cf8bb",
+                        "on-secondary-fixed-variant": "#005236",
+                        "on-secondary-container": "#00714d",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "primary-fixed": "#dbe1ff",
+                        "surface-container-high": "#e6e8ea",
+                        "surface": "#f7f9fb",
+                        "tertiary": "#3e3fcc",
+                        "on-surface-variant": "#434655",
+                        "tertiary-container": "#585be6",
+                        "surface-tint": "#0053db",
+                        "on-surface": "#191c1e",
+                        "on-primary-container": "#eeefff",
+                        "surface-bright": "#f7f9fb",
+                        "on-error-container": "#93000a",
+                        "on-background": "#191c1e",
+                        "inverse-primary": "#b4c5ff",
+                        "primary": "#004ac6",
+                        "on-primary-fixed": "#00174b",
+                        "on-tertiary": "#ffffff",
+                        "outline": "#737686",
+                        "on-secondary-fixed": "#002113",
+                        "secondary-fixed-dim": "#4edea3",
+                        "tertiary-fixed-dim": "#c0c1ff",
+                        "secondary-fixed": "#6ffbbe",
+                        "on-primary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "40px",
+                        "sm": "16px",
+                        "md": "24px",
+                        "gutter": "24px",
+                        "lg": "32px",
+                        "xs": "8px",
+                        "base": "4px",
+                        "xl": "48px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Geist"],
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Geist"],
+                        "label-sm": ["Geist"],
+                        "label-md": ["Geist"],
+                        "headline-lg": ["Geist"],
+                        "headline-md": ["Geist"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #f7f9fb;
+            font-family: 'Inter', sans-serif;
+        }
+        .custom-shadow {
+            shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0px 12px 32px rgba(37, 99, 235, 0.08);
+            transition: all 0.2s ease-out;
+        }
+        @keyframes fadeAndRise {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-entry {
+            animation: fadeAndRise 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<!-- Sidebar Navigation Shell -->
+<aside class="w-[280px] h-screen sticky left-0 top-0 overflow-y-auto bg-surface-container-lowest dark:bg-inverse-surface shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border-r border-outline-variant flex flex-col py-lg px-sm z-40 hidden md:flex">
+<div class="px-md mb-xl">
+<h1 class="text-headline-md font-headline-md font-bold text-primary dark:text-inverse-primary">UniLMS Premium</h1>
+<p class="text-label-md font-label-md text-on-surface-variant">Academic Portal</p>
+</div>
+<button class="mx-md mb-lg py-sm px-md bg-primary-container text-on-primary-container rounded-full flex items-center justify-center gap-base font-label-md hover:scale-[0.98] transition-transform duration-200">
+<span class="material-symbols-outlined">add</span>
+            New Request
+        </button>
+<nav class="flex-1 flex flex-col gap-base">
+<!-- Active State: Home -->
+<a class="flex items-center gap-sm px-md py-sm bg-primary-container dark:bg-primary-fixed-dim text-on-primary-container dark:text-on-primary-fixed-variant rounded-full border-l-4 border-primary dark:border-inverse-primary" href="#">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-md">Home</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-high transition-colors duration-200 rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+<span class="font-label-md">Classes</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-high transition-colors duration-200 rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+<span class="font-label-md">Assignments</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-high transition-colors duration-200 rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="font-label-md">Calendar</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-high transition-colors duration-200 rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="chat">chat</span>
+<span class="font-label-md">Messages</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-high transition-colors duration-200 rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-lg border-t border-outline-variant/30 flex flex-col gap-base">
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant dark:text-surface-variant hover:bg-surface-container transition-colors duration-200 rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-label-md">Help &amp; Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col min-h-screen">
+<!-- Top App Bar Shell -->
+<header class="w-full sticky top-0 z-50 h-20 bg-surface/80 dark:bg-on-background/80 backdrop-blur-md border-b border-outline-variant/30 flex items-center justify-between px-margin-desktop">
+<div class="flex items-center gap-lg flex-1">
+<span class="text-headline-md font-headline-md font-extrabold text-primary md:hidden">UniLMS</span>
+<div class="relative w-full max-w-md hidden lg:block">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-[48px] pr-md py-base bg-surface-container-low border-none rounded-full focus:ring-2 focus:ring-primary focus:bg-white transition-all text-body-md" placeholder="Search resources, courses..." type="text"/>
+</div>
+</div>
+<nav class="hidden md:flex items-center gap-lg px-xl">
+<a class="text-primary font-bold border-b-2 border-primary pb-base font-label-md" href="#">Stream</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors font-label-md" href="#">Classwork</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors font-label-md" href="#">People</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors font-label-md" href="#">Grades</a>
+</nav>
+<div class="flex items-center gap-md">
+<button class="hover:bg-surface-variant/20 rounded-full p-2 text-on-surface-variant transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="hover:bg-surface-variant/20 rounded-full p-2 text-on-surface-variant transition-all">
+<span class="material-symbols-outlined" data-icon="apps">apps</span>
+</button>
+<div class="h-10 w-10 rounded-full overflow-hidden border-2 border-primary cursor-pointer hover:scale-105 transition-transform">
+<img alt="Student Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfHSuDWxtGCkfTkS_yLw6pTEKNg2lWpKUlOiR2DcU9gjvG0EQRxyNjqtlm4yshRZ4RVBfhLWsbYbpHFjWIAcVutF52bKGRa1A5mQzDEaPM8pCE2uNaEf9eB7DRCRNWVh2RLdVNDjzL_YsRtS_QOSbyB1ZYLossZyXC01LpRfKhpylSHsKpTGl9RIqxctSC700yGBii5xt33xxh9m3zEWwJ0lPPubga4W5L7DtZVGCkHv30GDXAOzPMVmLUFBP1SLlK-UlmScxbZfI"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="p-margin-desktop animate-entry">
+<div class="mb-lg flex justify-between items-end">
+<div>
+<h2 class="text-headline-lg font-headline-lg text-on-surface mb-base">Welcome back, Professor Smith</h2>
+<p class="text-body-lg text-on-surface-variant">Here is what is happening across your courses today.</p>
+</div>
+<div class="flex gap-sm">
+<button class="px-md py-sm rounded-xl bg-surface-container-high text-on-surface-variant font-label-md flex items-center gap-xs hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[20px]">filter_list</span>
+                        Filter
+                    </button>
+</div>
+</div>
+<!-- Bento Grid of Course Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter">
+<!-- Course Card 1 -->
+<div class="bg-white rounded-xl overflow-hidden border border-outline-variant shadow-[0px_4px_20px_rgba(0,0,0,0.04)] card-hover flex flex-col">
+<div class="h-[160px] relative">
+<div class="absolute inset-0 bg-gradient-to-br from-primary to-tertiary opacity-90"></div>
+<img class="w-full h-full object-cover" data-alt="A sophisticated digital abstract visualization of code structures and interconnected data nodes. The aesthetic is modern and clean with vibrant shades of university blue and purple, featuring soft bokeh lighting. The overall mood is academic yet technologically advanced, suitable for a computer science curriculum." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8UMfeavKhh2SSKyAE47TZdBEy-K_eB1ru1clCPR1BRBKXrFm8YryexxBpO4YJvpmTIqim4vAlrGmo-SDIfHrnJWuUQIfybDMUQZx6-X9CnzR3z9LWqkJwDKyd5j9UtA3Kdjv3Rrlfl6pq5TzXyzUTaGsWK3f9eLxoMccgHYoyFogiqAqCrM9XtIKyqenS-QVNAoDlOtdmCbEdMsq1VoSlHM1S507W3cJZjd6xyOP6w1vYwKoe5aSATdY9zGOx66p_Tvh6SwqlxG0"/>
+<div class="absolute inset-0 p-md flex flex-col justify-end">
+<span class="bg-white/20 backdrop-blur-sm text-white text-label-sm w-fit px-2 py-1 rounded mb-xs uppercase tracking-wider">CS2001</span>
+<h3 class="text-headline-sm font-headline-sm text-white">Data Structures</h3>
+</div>
+</div>
+<div class="p-md flex-1 flex flex-col gap-md">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold text-xs">SA</div>
+<span class="text-body-md font-medium text-on-surface">Samin Ahmed</span>
+</div>
+<span class="px-3 py-1 bg-error-container text-on-error-container rounded-full text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                                3 Upcoming
+                            </span>
+</div>
+<div class="mt-auto">
+<div class="flex justify-between text-label-md mb-xs">
+<span class="text-on-surface-variant">Course Progress</span>
+<span class="text-primary font-bold">75%</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2">
+<div class="bg-primary h-full rounded-full w-[75%] transition-all duration-1000"></div>
+</div>
+</div>
+</div>
+<div class="px-md py-sm border-t border-outline-variant/30 bg-surface-container-lowest flex justify-end gap-md">
+<button class="text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">folder</span></button>
+<button class="text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">assignment</span></button>
+<button class="text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</div>
+<!-- Course Card 2 -->
+<div class="bg-white rounded-xl overflow-hidden border border-outline-variant shadow-[0px_4px_20px_rgba(0,0,0,0.04)] card-hover flex flex-col">
+<div class="h-[160px] relative">
+<div class="absolute inset-0 bg-gradient-to-tr from-secondary to-secondary-container opacity-90"></div>
+<img class="w-full h-full object-cover" data-alt="A clean and artistic representation of neural network patterns using glowing lines and crystalline structures. The color palette features deep emerald greens and minty secondary tones, creating a sense of growth and intelligence. The lighting is crisp and modern, reflecting a premium educational environment focused on artificial intelligence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAnlhCuUCqfzqqfRUZQP6jtHq2vSXNHYugf63NVtuMyPykvgQiEiFzLkfbZSSmCGTNy2h4665nGr4-ce1Ma7qQ_pxz-X8vdOsUNuqpUg1kLj7Kcou32g4j67mnT7JrfJob8hNeA_qTG3KzM0M9zPvt8q4K6v4TJJe2jTufI1WM6c8NVuBL7oT_7VJAGZLes8E4p8hB1sJJBAKzJ_O_qbaqNomh6w5L_bQfppPjJy6vAtMm7YZ03btpIbAbUZJOK7bnyLt8M0bPlGU"/>
+<div class="absolute inset-0 p-md flex flex-col justify-end">
+<span class="bg-white/20 backdrop-blur-sm text-white text-label-sm w-fit px-2 py-1 rounded mb-xs uppercase tracking-wider">AI3002</span>
+<h3 class="text-headline-sm font-headline-sm text-white">Artificial Intelligence</h3>
+</div>
+</div>
+<div class="p-md flex-1 flex flex-col gap-md">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold text-xs">UW</div>
+<span class="text-body-md font-medium text-on-surface">Usman Wajid</span>
+</div>
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                                0 Pending
+                            </span>
+</div>
+<div class="mt-auto">
+<div class="flex justify-between text-label-md mb-xs">
+<span class="text-on-surface-variant">Course Progress</span>
+<span class="text-primary font-bold">42%</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2">
+<div class="bg-primary h-full rounded-full w-[42%] transition-all duration-1000"></div>
+</div>
+</div>
+</div>
+<div class="px-md py-sm border-t border-outline-variant/30 bg-surface-container-lowest flex justify-end gap-md">
+<button class="text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">folder</span></button>
+<button class="text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">assignment</span></button>
+<button class="text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</div>
+<!-- Course Card 3 -->
+<div class="bg-white rounded-xl overflow-hidden border border-outline-variant shadow-[0px_4px_20px_rgba(0,0,0,0.04)] card-hover flex flex-col">
+<div class="h-[160px] relative">
+<div class="absolute inset-0 bg-gradient-to-bl from-tertiary to-primary-container opacity-90"></div>
+<img class="w-full h-full object-cover" data-alt="Modern server room visualization with glowing blue LED indicator lights and fiber optic cables. The style is minimalist corporate with a focus on tactile depth and technical precision. Colors are predominantly deep blues and vibrant electric accents, evoking a sense of reliability and institutional excellence in systems engineering." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxxBqS-FpFzojD3DlU4r9hgwGrOgcz9bFCHZYoneOvvpihMPKTdYsHmHvRXyfdGaSHstku9WKEUShSXb5XgIsCs7JmRmWi1zGPCm4FCqawiuOCE3p5I0-4KS-ww0h_lH0JT2_TGOXn9fL6jRBOQTiSbIPKynO5iEv7OOb_kT2hNwlkdHsv6DizIHKMsBA6hZcev_Fj4Kj49R0fXHSU6FpYaOs8dE2Bucvb3Cpc7B7x8p2XXpGXu0Z4dZfhMo1-toKK-0sFQ18Jpgg"/>
+<div class="absolute inset-0 p-md flex flex-col justify-end">
+<span class="bg-white/20 backdrop-blur-sm text-white text-label-sm w-fit px-2 py-1 rounded mb-xs uppercase tracking-wider">OS4005</span>
+<h3 class="text-headline-sm font-headline-sm text-white">Operating Systems</h3>
+</div>
+</div>
+<div class="p-md flex-1 flex flex-col gap-md">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed font-bold text-xs">FB</div>
+<span class="text-body-md font-medium text-on-surface">Fazle Basit</span>
+</div>
+<span class="px-3 py-1 bg-error-container text-on-error-container rounded-full text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">history</span>
+                                2 Overdue
+                            </span>
+</div>
+<div class="mt-auto">
+<div class="flex justify-between text-label-md mb-xs">
+<span class="text-on-surface-variant">Course Progress</span>
+<span class="text-primary font-bold">90%</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2">
+<div class="bg-primary h-full rounded-full w-[90%] transition-all duration-1000"></div>
+</div>
+</div>
+</div>
+<div class="px-md py-sm border-t border-outline-variant/30 bg-surface-container-lowest flex justify-end gap-md">
+<button class="text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">folder</span></button>
+<button class="text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">assignment</span></button>
+<button class="text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</div>
+<!-- Course Card 4 -->
+<div class="bg-white rounded-xl overflow-hidden border border-outline-variant shadow-[0px_4px_20px_rgba(0,0,0,0.04)] card-hover flex flex-col">
+<div class="h-[160px] relative">
+<div class="absolute inset-0 bg-gradient-to-r from-on-tertiary-container to-tertiary opacity-90"></div>
+<img class="w-full h-full object-cover" data-alt="A professional software development environment with multiple screens showing clean code and architectural diagrams. The lighting is warm yet professional, with a focus on focused calm. The color palette consists of soft purples and deep academic blues, creating an atmosphere of institutional reliability and modern minimalism." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuiBOJROcSPHb1ieYJwT2CVKXgmK3qJ04q0TAmPjULhWk8RLnyV9cdrAuP5p-TJMKBDK_PFbNbSljI_jQZd5SvFB7vIWOV2m9W_XWPGVTyGYVMN7LtJbtXoxXrCWH_dSI-3pAgp16hiE4NZ9nrI_QSqyahIjNHPsK6mSauO-6y29j3Lg7aM2mqlvQ5jj3USXcS25Htgez1SxoyZ02EHc5ylceo7telHpylIze31rt6AG662FGNP0zfX__iVIvdi6PNpe16AJMOIfE"/>
+<div class="absolute inset-0 p-md flex flex-col justify-end">
+<span class="bg-white/20 backdrop-blur-sm text-white text-label-sm w-fit px-2 py-1 rounded mb-xs uppercase tracking-wider">SE2004</span>
+<h3 class="text-headline-sm font-headline-sm text-white">Software Engineering</h3>
+</div>
+</div>
+<div class="p-md flex-1 flex flex-col gap-md">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed font-bold text-xs">SR</div>
+<span class="text-body-md font-medium text-on-surface">Sameed Ur Rehman</span>
+</div>
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">event</span>
+                                Next: Monday
+                            </span>
+</div>
+<div class="mt-auto">
+<div class="flex justify-between text-label-md mb-xs">
+<span class="text-on-surface-variant">Course Progress</span>
+<span class="text-primary font-bold">60%</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2">
+<div class="bg-primary h-full rounded-full w-[60%] transition-all duration-1000"></div>
+</div>
+</div>
+</div>
+<div class="px-md py-sm border-t border-outline-variant/30 bg-surface-container-lowest flex justify-end gap-md">
+<button class="text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">folder</span></button>
+<button class="text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">assignment</span></button>
+<button class="text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</div>
+<!-- Course Card 5 -->
+<div class="bg-white rounded-xl overflow-hidden border border-outline-variant shadow-[0px_4px_20px_rgba(0,0,0,0.04)] card-hover flex flex-col">
+<div class="h-[160px] relative">
+<div class="absolute inset-0 bg-gradient-to-br from-secondary to-primary opacity-90"></div>
+<img class="w-full h-full object-cover" data-alt="Stylized database schema represented as glowing interconnected 3D blocks in a dark digital space. The lighting features sharp teal and sapphire accents, creating a high-contrast modern tech aesthetic. The composition emphasizes organization and structured data, aligning with university-level database management curriculum." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWT4vdhD-6GJzR2wEETJtq7KHruFGFcZs8toK28gOQyyJ4uoijBZ0OdDH7eNEd7MIP9bgY3IakCYZ_IrTdOvqlN_zpQIsRuTLBQU7xLHB8FDTgqe36aaLhbNCwZTtKg3vpP7efUfu_XRAYtgxyzkXqQA_7yJEA3-vSmgZIdYQtjLs41bJo5w6IAJzRRV5hVXxs0F8dOLj7LAYOlEkihS79vmTvr9EzsxtBiqRLkQeFzNJDUQqdqiOx2EP3zo_f-Xtamqq8nNImv6w"/>
+<div class="absolute inset-0 p-md flex flex-col justify-end">
+<span class="bg-white/20 backdrop-blur-sm text-white text-label-sm w-fit px-2 py-1 rounded mb-xs uppercase tracking-wider">DB3001</span>
+<h3 class="text-headline-sm font-headline-sm text-white">Database Systems</h3>
+</div>
+</div>
+<div class="p-md flex-1 flex flex-col gap-md">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-primary-fixed-dim flex items-center justify-center text-on-primary-fixed-variant font-bold text-xs">SK</div>
+<span class="text-body-md font-medium text-on-surface">Shoaib Khan</span>
+</div>
+<span class="px-3 py-1 bg-error-container text-on-error-container rounded-full text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">edit_document</span>
+                                1 Quiz
+                            </span>
+</div>
+<div class="mt-auto">
+<div class="flex justify-between text-label-md mb-xs">
+<span class="text-on-surface-variant">Course Progress</span>
+<span class="text-primary font-bold">55%</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2">
+<div class="bg-primary h-full rounded-full w-[55%] transition-all duration-1000"></div>
+</div>
+</div>
+</div>
+<div class="px-md py-sm border-t border-outline-variant/30 bg-surface-container-lowest flex justify-end gap-md">
+<button class="text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">folder</span></button>
+<button class="text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">assignment</span></button>
+<button class="text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</div>
+<!-- Course Card 6 -->
+<div class="bg-white rounded-xl overflow-hidden border border-outline-variant shadow-[0px_4px_20px_rgba(0,0,0,0.04)] card-hover flex flex-col">
+<div class="h-[160px] relative">
+<div class="absolute inset-0 bg-gradient-to-tr from-primary to-primary-container opacity-90"></div>
+<img class="w-full h-full object-cover" data-alt="Digital network infrastructure with high-speed light trails symbolizing data transmission across a global web. The design uses a premium palette of deep navy and electric blue. The aesthetic is clean, corporate, and inspiring, suggesting a high-level academic study of computer networks and global connectivity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJY6EeK4qRnjIFw4GAbXaEAc8DuMv4sOLnnGWk3ijaAeVSTf8XRFpwAeoM_PtXRLq2aeANfBfgQfzFd0TtStzrQuXGMfiBSlF85LRNuMIox1ao-PNc4_i85TWBSKkB4McewE2JDsgx-GeGIPI1m0zkTGbDkt8G8iYg5JLElRumRBzmZrlC4p9dQxAnvlsmZ30MW4un2rekeQh67tJjQm5WZ4ujjnNEXCBkAlSRpxytQrQNrZuXVDYob63tOg-7ZAcSDn2Ujtvw3GY"/>
+<div class="absolute inset-0 p-md flex flex-col justify-end">
+<span class="bg-white/20 backdrop-blur-sm text-white text-label-sm w-fit px-2 py-1 rounded mb-xs uppercase tracking-wider">CN3008</span>
+<h3 class="text-headline-sm font-headline-sm text-white">Computer Networks</h3>
+</div>
+</div>
+<div class="p-md flex-1 flex flex-col gap-md">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container font-bold text-xs">MM</div>
+<span class="text-body-md font-medium text-on-surface">Muhammad Mehdi</span>
+</div>
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                                All caught up
+                            </span>
+</div>
+<div class="mt-auto">
+<div class="flex justify-between text-label-md mb-xs">
+<span class="text-on-surface-variant">Course Progress</span>
+<span class="text-primary font-bold">82%</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2">
+<div class="bg-primary h-full rounded-full w-[82%] transition-all duration-1000"></div>
+</div>
+</div>
+</div>
+<div class="px-md py-sm border-t border-outline-variant/30 bg-surface-container-lowest flex justify-end gap-md">
+<button class="text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">folder</span></button>
+<button class="text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">assignment</span></button>
+<button class="text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Mobile Bottom Navigation Shell -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant px-sm py-xs flex justify-around items-center z-50">
+<a class="flex flex-col items-center text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="text-[10px] font-bold">Home</span>
+</a>
+<a class="flex flex-col items-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">school</span>
+<span class="text-[10px]">Classes</span>
+</a>
+<a class="flex flex-col items-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="text-[10px]">Tasks</span>
+</a>
+<a class="flex flex-col items-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="text-[10px]">Alerts</span>
+</a>
+</nav>
+<!-- Contextual FAB (Hidden on most sub-pages, shown on dashboard) -->
+<button class="fixed right-lg bottom-xl md:bottom-lg bg-primary text-on-primary w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-40">
+<span class="material-symbols-outlined text-[28px]">chat_bubble</span>
+</button>
+<script>
+        // Simple micro-interaction for progress bar animation on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const progressBars = document.querySelectorAll('.bg-primary.h-full');
+            progressBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 300);
+            });
+        });
+    </script>
+</body></html>

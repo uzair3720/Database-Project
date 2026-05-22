@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Notifications · LMP{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+  <h1 class="font-geist text-headline-lg text-on-surface dark:text-inverse-on-surface mb-md">Notifications</h1>
+
+  {% if not items %}
+    <div class="p-lg bg-surface-container-lowest dark:bg-[#1d2123] rounded-xl border border-outline-variant/40 shadow-card text-center">
+      <span class="material-symbols-outlined text-[48px] text-outline">notifications_off</span>
+      <p class="font-inter text-body-md text-on-surface-variant mt-xs">You're all caught up.</p>
+    </div>
+  {% else %}
+    <div class="space-y-xs">
+    {% for n in items %}
+      {% set icon = {'assignment':'assignment','grade':'grade','announcement':'campaign'} %}
+      <a href="{{ url_for('notifications.open_link', notification_id=n.notification_id) }}"
+         class="flex items-center gap-sm p-md rounded-lg border transition-colors
+                {% if n.is_read %}bg-surface-container-lowest dark:bg-[#1d2123] border-outline-variant/30
+                {% else %}bg-primary-fixed dark:bg-primary-fixed-dim/20 border-primary/30{% endif %}
+                hover:shadow-card">
+        <div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined">{{ icon.get(n.kind, 'notifications') }}</span>
+        </div>
+        <div class="flex-1">
+          <p class="font-inter text-body-md text-on-surface dark:text-inverse-on-surface">{{ n.message }}</p>
+          <p class="font-geist text-label-sm text-on-surface-variant">{{ n.created_at.strftime('%b %d, %Y · %H:%M') }}</p>
+        </div>
+        {% if not n.is_read %}<span class="w-2 h-2 rounded-full bg-primary"></span>{% endif %}
+      </a>
+    {% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

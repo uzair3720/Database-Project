@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Search · LMP{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <form action="{{ url_for('search.index') }}" method="get" class="mb-md">
+    <div class="relative">
+      <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">search</span>
+      <input name="q" value="{{ q }}" autofocus
+             placeholder="Search courses, assignments, posts…"
+             class="w-full pl-[44px] pr-md py-md rounded-full bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 focus:border-primary focus:ring-2 focus:ring-primary outline-none font-inter text-body-md" />
+    </div>
+  </form>
+
+  {% if q %}
+    {% set total = results.courses|length + results.assignments|length + results.announcements|length %}
+    <p class="font-geist text-label-md text-on-surface-variant mb-md">{{ total }} results for "{{ q }}"</p>
+  {% endif %}
+
+  {% macro group(title, items, render) %}
+    {% if items %}
+      <section class="mb-md">
+        <h2 class="font-geist text-headline-sm text-on-surface dark:text-inverse-on-surface mb-sm">{{ title }}</h2>
+        <div class="space-y-base">
+          {% for it in items %}{{ render(it) }}{% endfor %}
+        </div>
+      </section>
+    {% endif %}
+  {% endmacro %}
+
+  {% macro course_row(c) %}
+    <a href="{{ url_for('courses.detail', course_id=c.course_id) }}"
+       class="block p-md rounded-lg bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 hover:shadow-card">
+      <p class="font-geist text-label-sm text-primary uppercase">{{ c.course_code or c.join_code }}</p>
+      <p class="font-inter text-body-md text-on-surface dark:text-inverse-on-surface">{{ c.course_name }}</p>
+    </a>
+  {% endmacro %}
+  {% macro asn_row(a) %}
+    <a href="{{ url_for('assignments.detail', assignment_id=a.assignment_id) }}"
+       class="block p-md rounded-lg bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 hover:shadow-card">
+      <p class="font-inter text-body-md text-on-surface dark:text-inverse-on-surface">{{ a.title }}</p>
+      <p class="font-geist text-label-sm text-on-surface-variant">{{ a.course_name }}{% if a.due_date %} · due {{ a.due_date.strftime('%b %d') }}{% endif %}</p>
+    </a>
+  {% endmacro %}
+  {% macro ann_row(a) %}
+    <a href="{{ url_for('announcements.detail', announcement_id=a.announcement_id) }}"
+       class="block p-md rounded-lg bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 hover:shadow-card">
+      <p class="font-inter text-body-md text-on-surface dark:text-inverse-on-surface">{{ a.title }}</p>
+      <p class="font-geist text-label-sm text-on-surface-variant">{{ a.course_name }} · {{ a.posted_at.strftime('%b %d, %Y') }}</p>
+    </a>
+  {% endmacro %}
+
+  {{ group('Courses',       results.courses,       course_row) }}
+  {{ group('Assignments',   results.assignments,   asn_row) }}
+  {{ group('Announcements', results.announcements, ann_row) }}
+
+  {% if q and not (results.courses or results.assignments or results.announcements) %}
+    <p class="font-inter text-body-md text-on-surface-variant text-center mt-lg">No results.</p>
+  {% endif %}
+</div>
+{% endblock %}

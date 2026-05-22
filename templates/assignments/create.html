@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}New Assignment · LMP{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+  <h1 class="font-geist text-headline-lg text-on-surface dark:text-inverse-on-surface mb-md">Create assignment</h1>
+  <form action="{{ url_for('assignments.create', course_id=course_id) }}" method="post" enctype="multipart/form-data"
+        class="p-md rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card space-y-sm">
+    <div class="space-y-base">
+      <label class="font-geist text-label-sm text-on-surface-variant block">Title</label>
+      <input name="title" required
+             class="w-full px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0 outline-none font-inter text-body-md" />
+    </div>
+    <div class="space-y-base">
+      <label class="font-geist text-label-sm text-on-surface-variant block">Description</label>
+      <textarea name="description" rows="5"
+                class="w-full px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0 outline-none font-inter text-body-md"></textarea>
+    </div>
+    <div class="grid grid-cols-2 gap-sm">
+      <div class="space-y-base">
+        <label class="font-geist text-label-sm text-on-surface-variant block">Due date <span class="text-on-surface-variant/60">(optional)</span></label>
+        <input name="due_date" type="datetime-local"
+               class="w-full px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0 outline-none font-inter text-body-md" />
+      </div>
+      <div class="space-y-base">
+        <label class="font-geist text-label-sm text-on-surface-variant block">Max marks</label>
+        <input name="max_marks" type="number" min="1" value="100" required
+               class="w-full px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0 outline-none font-inter text-body-md" />
+      </div>
+    </div>
+    <div class="space-y-base">
+      <label class="font-geist text-label-sm text-on-surface-variant block">Attachment <span class="text-on-surface-variant/60">(optional)</span></label>
+      <input name="attachment" type="file"
+             class="w-full font-inter text-body-sm file:mr-sm file:px-md file:py-base file:rounded-lg file:border-0 file:bg-primary-fixed file:text-on-primary-fixed-variant file:font-geist file:text-label-md hover:file:bg-primary-fixed-dim cursor-pointer" />
+    </div>
+    <div class="flex justify-end gap-xs pt-base">
+      <a href="{{ url_for('courses.detail', course_id=course_id) }}" class="px-md py-sm rounded-lg font-geist text-label-md text-on-surface-variant hover:bg-surface-container">Cancel</a>
+      <button class="px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-geist text-label-md hover:shadow-hover active:scale-[0.98] transition-all">Create assignment</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

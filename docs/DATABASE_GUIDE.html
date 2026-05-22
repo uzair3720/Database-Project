@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>LMP — Database Guide & Viva Preparation</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  body { font-family: "Liberation Sans", Arial, sans-serif; font-size: 11pt; color: #1a1a1a; line-height: 1.5; }
+  h1 { font-size: 22pt; color: #2563eb; border-bottom: 3px solid #2563eb; padding-bottom: 6px; }
+  h2 { font-size: 15pt; color: #1d4ed8; margin-top: 22px; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px; }
+  h3 { font-size: 12.5pt; color: #334155; margin-top: 16px; }
+  code { font-family: "Liberation Mono", monospace; background: #f1f5f9; padding: 1px 4px; border-radius: 3px; font-size: 9.5pt; }
+  pre { background: #0f172a; color: #e2e8f0; padding: 10px 12px; border-radius: 6px; font-family: "Liberation Mono", monospace; font-size: 8.8pt; line-height: 1.4; overflow-wrap: break-word; white-space: pre-wrap; }
+  pre .kw { color: #93c5fd; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 10pt; }
+  th, td { border: 1px solid #cbd5e1; padding: 5px 8px; text-align: left; vertical-align: top; }
+  th { background: #e0e7ff; color: #1e3a8a; }
+  .tag { display: inline-block; background: #2563eb; color: #fff; padding: 1px 7px; border-radius: 10px; font-size: 8.5pt; }
+  .q { background: #eff6ff; border-left: 4px solid #2563eb; padding: 8px 12px; margin: 10px 0; border-radius: 0 4px 4px 0; }
+  .q .ques { font-weight: bold; color: #1e3a8a; }
+  .note { background: #fef9c3; border-left: 4px solid #ca8a04; padding: 8px 12px; margin: 10px 0; }
+  .ok { color: #15803d; font-weight: bold; }
+  ul { margin: 6px 0; }
+  .pb { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<h1>Learning Management Portal — Database Guide</h1>
+<p><b>Course:</b> Database Systems &nbsp;|&nbsp; <b>Purpose:</b> Understand every database-related part of this project and prepare for the viva. Read this top-to-bottom once; you will be able to answer anything they ask.</p>
+
+<h2>1. The big picture — how the app talks to the database</h2>
+<p>This is a <b>Flask (Python) web app</b> backed by <b>PostgreSQL 16</b>. There is <b>no ORM</b> — we write raw SQL and run it through the <code>psycopg2</code> driver. The flow for any page is:</p>
+<ol>
+  <li>The browser hits a URL (e.g. <code>/courses/5</code>).</li>
+  <li>A <b>route</b> function in the <code>routes/</code> folder runs.</li>
+  <li>It calls <code>get_db_connection()</code> (in <code>db.py</code>) to open a PostgreSQL connection.</li>
+  <li>It runs SQL with <code>cur.execute("... %s ...", (values,))</code>.</li>
+  <li>It reads rows with <code>cur.fetchone()</code> / <code>cur.fetchall()</code>, then <code>conn.commit()</code> for writes.</li>
+  <li>It passes the rows to a Jinja2 HTML template and closes the connection in a <code>finally</code> block.</li>
+</ol>
+
+<h3>The one file that opens every connection — <code>db.py</code></h3>
+<pre>def get_db_connection():
+    conn = psycopg2.connect(
+        host=config.DB_HOST, port=config.DB_PORT,
+        dbname=config.DB_NAME, user=config.DB_USER,
+        password=config.DB_PASSWORD,
+        cursor_factory=RealDictCursor,   # rows come back as Python dicts
+    )
+    return conn</pre>
+<p><b>Why <code>RealDictCursor</code>?</b> It makes each row behave like a dictionary, so we write <code>row["course_name"]</code> instead of <code>row[1]</code> — readable and not order-dependent. <b>One connection per request</b>, closed in <code>finally</code>; we deliberately avoid connection pools to keep the code simple to explain.</p>
+
+<h2>2. The schema — 10 tables</h2>
+<p>Defined in <code>schema.sql</code>. Created in dependency order; dropped in reverse with <code>CASCADE</code> so the file re-runs cleanly.</p>
+<table>
+<tr><th>Table</th><th>What it stores</th><th>Key relationships</th></tr>
+<tr><td><code>users</code></td><td>Both students &amp; instructors; split by <code>role</code> column</td><td>PK <code>user_id</code></td></tr>
+<tr><td><code>courses</code></td><td>One course, owned by one instructor; has a unique <code>join_code</code></td><td><code>instructor_id</code> → users</td></tr>
+<tr><td><code>enrollments</code></td><td>Bridge: which student is in which course</td><td>→ users, → courses; <code>UNIQUE(student,course)</code></td></tr>
+<tr><td><code>assignments</code></td><td>Instructor's task with due date &amp; max marks</td><td><code>course_id</code> → courses</td></tr>
+<tr><td><code>submissions</code></td><td>A student's uploaded file + grade + feedback</td><td>→ assignments, → users; <code>UNIQUE(assignment,student)</code></td></tr>
+<tr><td><code>quizzes</code></td><td>Quiz metadata (scored offline)</td><td><code>course_id</code> → courses</td></tr>
+<tr><td><code>quiz_attempts</code></td><td>One score per student per quiz</td><td>→ quizzes, → users</td></tr>
+<tr><td><code>announcements</code></td><td>Instructor posts to a course stream</td><td>→ courses, → users</td></tr>
+<tr><td><code>comments</code></td><td>A comment on EITHER a submission OR an announcement</td><td>polymorphic + CHECK constraint</td></tr>
+<tr><td><code>grade_audit_log</code></td><td>Auto-written record of every grade change</td><td>filled by a trigger</td></tr>
+</table>
+
+<h3>Design choices they may ask about</h3>
+<ul>
+  <li><b>One <code>users</code> table for both roles</b> — keeps every foreign key as a single <code>user_id</code>; the <code>role</code> column (with a <code>CHECK</code>) distinguishes them.</li>
+  <li><b><code>ON DELETE CASCADE</code> everywhere</b> — delete a course and all its assignments, submissions, announcements vanish automatically. No orphan rows.</li>
+  <li><b><code>UNIQUE</code> constraints</b> — <code>email</code> on users, <code>join_code</code> on courses, <code>(student_id, course_id)</code> on enrollments, <code>(assignment_id, student_id)</code> on submissions. These enforce business rules <i>at the database level</i>.</li>
+  <li><b><code>CHECK</code> constraints</b> — <code>role IN ('student','instructor')</code>; <code>grade BETWEEN 0 AND 100</code>; the polymorphic comment rule (exactly one of submission/announcement is set).</li>
+</ul>
+
+<h2 class="pb">3. The four CRUD operations — where they live</h2>
+<p>Graders will ask you to demonstrate all four. Here is a concrete example of each so you can point at code.</p>
+
+<h3><span class="tag">CREATE</span> — making a course (<code>routes/courses.py</code>)</h3>
+<pre>cur.execute(
+    """INSERT INTO courses (course_name, course_description, join_code,
+                            instructor_id, course_code)
+       VALUES (%s, %s, %s, %s, %s) RETURNING course_id""",
+    (name, description, join_code, session["user_id"], course_code),
+)
+new_id = cur.fetchone()["course_id"]
+conn.commit()</pre>
+<p><code>RETURNING course_id</code> gives us the new row's ID in the same round-trip so we can redirect to its page.</p>
+
+<h3><span class="tag">READ</span> — listing a student's courses with live metrics</h3>
+<pre>SELECT c.course_id, c.course_name,
+   (SELECT COUNT(*) FROM assignments a WHERE a.course_id = c.course_id) AS total_assignments,
+   (SELECT COUNT(*) FROM submissions s JOIN assignments a ON a.assignment_id = s.assignment_id
+      WHERE a.course_id = c.course_id AND s.student_id = %s AND s.grade IS NOT NULL) AS done
+FROM enrollments e JOIN courses c ON c.course_id = e.course_id
+WHERE e.student_id = %s</pre>
+<p>The progress bar % is computed from <b>real data</b>: graded submissions ÷ total assignments. Nothing is hard-coded.</p>
+
+<h3><span class="tag">UPDATE</span> — editing a course / grading a submission</h3>
+<pre>UPDATE courses SET course_name = %s, course_description = %s, course_code = %s
+WHERE course_id = %s</pre>
+<p>Grading does an UPDATE on <code>submissions.grade</code> — which fires the audit trigger (Section 4).</p>
+
+<h3><span class="tag">DELETE</span> — removing a course / a comment / a student</h3>
+<pre>DELETE FROM courses WHERE course_id = %s AND instructor_id = %s</pre>
+<p>Notice the extra <code>AND instructor_id = %s</code>: a user can only delete <i>their own</i> course. The same ownership pattern guards comment deletes and student removal.</p>
+
+<h2>4. Triggers — logic that runs automatically inside the DB</h2>
+<p>Defined in <code>db/triggers.sql</code>. A <b>trigger</b> is a function the database runs by itself when a row is inserted/updated/deleted — the app doesn't have to remember to do it.</p>
+
+<h3>(a) Keep <code>updated_at</code> honest — <code>fn_set_updated_at()</code></h3>
+<p><code>BEFORE UPDATE</code> on 5 tables, it sets <code>NEW.updated_at = CURRENT_TIMESTAMP</code>. So every edit timestamps itself automatically.</p>
+
+<h3>(b) Grade audit log — <code>fn_log_grade_changes()</code></h3>
+<p><code>AFTER INSERT OR UPDATE</code> on <code>submissions</code>. When a grade is set or changed, it writes a row into <code>grade_audit_log</code> recording the old grade, new grade, and <b>who</b> changed it. The "who" comes from a session variable the Flask code sets:</p>
+<pre>SET LOCAL app.current_user_id = '<instructor id>';   -- set by Flask in the grading transaction
+-- trigger reads it back with:
+current_setting('app.current_user_id', true)</pre>
+<p>It uses <code>IS DISTINCT FROM</code> so it does <b>not</b> log when the grade didn't actually change (and treats two NULLs as equal). This proves nobody silently altered a grade.</p>
+
+<h3>(c) Enforce enrollment on submission — <code>fn_enforce_enrollment_for_submission()</code></h3>
+<p><code>BEFORE INSERT</code> on <code>submissions</code>. It walks back to the assignment's course and checks the student is enrolled; if not, it <code>RAISE EXCEPTION</code> and the insert fails. This is a <b>database-level guard</b> — even a direct <code>psql</code> insert can't break the rule.</p>
+
+<h2 class="pb">5. Views — saved queries</h2>
+<p>Defined in <code>db/views.sql</code>. A <b>view</b> is a stored SELECT you can query like a table; it avoids repeating long joins.</p>
+<table>
+<tr><th>View</th><th>Answers the question</th></tr>
+<tr><td><code>student_grades_view</code></td><td>"What grade did each student get on each assignment?" (joins submissions+users+assignments+courses)</td></tr>
+<tr><td><code>course_enrollment_counts</code></td><td>"How many students are in each course?" (LEFT JOIN so empty courses show 0)</td></tr>
+<tr><td><code>instructor_dashboard</code></td><td>"For this instructor: how many courses, students, assignments?"</td></tr>
+</table>
+
+<h2>6. Stored functions (PL/pgSQL)</h2>
+<p>Defined in <code>db/procedures.sql</code>. Logic kept in the database, callable from SQL.</p>
+<ul>
+  <li><b><code>fn_enroll_student(student_id, join_code)</code></b> — validates the user is a real student, the code maps to a real course, and they aren't already enrolled; then inserts the enrollment. Each failure does a clear <code>RAISE EXCEPTION</code> that Flask shows to the user.</li>
+  <li><b><code>fn_course_average_grade(course_id)</code></b> — returns <code>AVG(grade)</code> across graded submissions in a course (NULL if none graded yet).</li>
+</ul>
+
+<h2>7. SQL Injection — <span class="ok">your app is SECURE</span></h2>
+<div class="q"><span class="ques">Q: What is SQL Injection?</span><br>
+An attack where a user types SQL fragments into an input field, and if the app builds its query by <b>gluing strings together</b>, the attacker's text becomes executable SQL. Classic example: a login form where entering <code>' OR '1'='1</code> as the password turns <code>WHERE password = '' OR '1'='1'</code> into something always true — logging in without a password. Worse payloads can read or drop tables.</div>
+
+<div class="q"><span class="ques">Q: How do you prevent it?</span><br>
+Use <b>parameterized queries</b> (a.k.a. prepared statements / bound parameters). You send the SQL with <code>%s</code> placeholders and the values <b>separately</b>; the database driver treats the values strictly as data, never as SQL. Other layers: input validation, least-privilege DB user, and not exposing raw error messages.</div>
+
+<div class="q"><span class="ques">Q: Is THIS application vulnerable? Why / why not?</span><br>
+<b class="ok">No — it is safe.</b> Every single query in the project uses psycopg2 parameter binding:
+<pre>cur.execute("SELECT role FROM users WHERE email = %s", (email,))</pre>
+The <code>%s</code> is <b>not</b> Python string formatting — it is psycopg2's placeholder. The driver sends the query and the <code>(email,)</code> tuple separately, so even if someone types <code>' OR '1'='1</code> it is treated as a literal string to match, not as code. We <b>never</b> use f-strings, <code>+</code> concatenation, or <code>%</code> formatting to build SQL with user input. The stored function <code>fn_enroll_student</code> is also called with parameters, not concatenation.</div>
+
+<div class="note"><b>If they push:</b> "Show me one query and prove it's safe." → Open <code>routes/auth.py</code> login, point to the <code>%s</code> + tuple. Say: <i>"The value travels in a separate protocol field; PostgreSQL parses the SQL text first, then plugs the value in as data — so injected SQL is never parsed as SQL."</i></div>
+
+<h2 class="pb">8. Likely viva questions &amp; model answers</h2>
+
+<div class="q"><span class="ques">Q1. Walk me through what happens when a student submits an assignment.</span><br>
+The route receives the uploaded file, saves it under <code>uploads/submissions/</code>, then runs an <code>INSERT INTO submissions</code> (or UPDATE if re-submitting — enforced by the <code>UNIQUE(assignment_id, student_id)</code> constraint). The <code>BEFORE INSERT</code> trigger checks the student is enrolled; if not, the insert is rejected. We then commit.</div>
+
+<div class="q"><span class="ques">Q2. How do you store passwords?</span><br>
+We never store plaintext. We hash with <b>bcrypt</b> (a slow, salted hashing algorithm) and store only the hash in <code>users.password_hash</code>. At login we use bcrypt's check function to compare. bcrypt is deliberately slow to resist brute-force, and salts defeat rainbow tables.</div>
+
+<div class="q"><span class="ques">Q3. Why use foreign keys with ON DELETE CASCADE?</span><br>
+Foreign keys enforce referential integrity — you can't have a submission pointing to a non-existent assignment. CASCADE means deleting a parent (e.g. a course) auto-deletes its children (assignments, enrollments, announcements), so we never leave orphan rows or have to delete them manually in code.</div>
+
+<div class="q"><span class="ques">Q4. Difference between a view, a trigger, and a stored function here?</span><br>
+A <b>view</b> is a saved SELECT (read-only convenience). A <b>function</b> is callable logic that returns a value (e.g. enrol a student, compute an average). A <b>trigger</b> is a function the DB runs <i>automatically</i> on insert/update/delete (e.g. audit a grade change). We use all three.</div>
+
+<div class="q"><span class="ques">Q5. How do you guarantee a student can't enrol twice / submit twice?</span><br>
+Database <code>UNIQUE</code> constraints: <code>UNIQUE(student_id, course_id)</code> on enrollments and <code>UNIQUE(assignment_id, student_id)</code> on submissions. The DB rejects the duplicate even if the app logic had a bug.</div>
+
+<div class="q"><span class="ques">Q6. What is a transaction and where do you use one?</span><br>
+A transaction groups statements so they all succeed or all roll back. We <code>conn.commit()</code> on success and <code>conn.rollback()</code> in the <code>except</code> block. Grading uses one transaction that sets <code>app.current_user_id</code> and updates the grade together, so the audit trigger records the correct user.</div>
+
+<div class="q"><span class="ques">Q7. Why no ORM?</span><br>
+For a DB-systems course we wanted to write and own the SQL — joins, constraints, triggers, views — rather than hide them behind an ORM. It makes the database concepts visible and gradeable.</div>
+
+<div class="q"><span class="ques">Q8. What does RealDictCursor do?</span><br>
+It returns each row as a dictionary keyed by column name, so we access <code>row["grade"]</code> instead of a positional index. Cleaner and safe against column-order changes.</div>
+
+<div class="note"><b>30-second summary to memorise:</b> "It's a Flask + PostgreSQL app, raw SQL via psycopg2, 10 tables with FK CASCADE and UNIQUE/CHECK constraints. We use views for reports, PL/pgSQL functions for enrolment and averages, and triggers for grade auditing, timestamps, and enrolment enforcement. All queries are parameterized so we're safe from SQL injection. Passwords are bcrypt-hashed."</p></div>
+
+</body>
+</html>

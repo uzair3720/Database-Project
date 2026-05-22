@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · LMP{% endblock %}
+{% block content %}
+<div class="mb-md flex justify-between items-end flex-wrap gap-sm">
+  <div>
+    <h1 class="font-geist text-headline-lg text-on-surface dark:text-inverse-on-surface mb-base">
+      Welcome back, {{ session.get('name') }}
+    </h1>
+    <p class="font-inter text-body-lg text-on-surface-variant">
+      {% if session.get('role') == 'instructor' %}Here's what's happening across your courses.
+      {% else %}Pick up where you left off.{% endif %}
+    </p>
+  </div>
+  {% if session.get('role') == 'instructor' %}
+    <a href="{{ url_for('courses.create') }}"
+       class="px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-geist text-label-md
+              flex items-center gap-xs hover:shadow-hover active:scale-[0.98] transition-all">
+      <span class="material-symbols-outlined">add</span> New Course
+    </a>
+  {% else %}
+    <a href="{{ url_for('courses.join') }}"
+       class="px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-geist text-label-md
+              flex items-center gap-xs hover:shadow-hover active:scale-[0.98] transition-all">
+      <span class="material-symbols-outlined">add</span> Join Course
+    </a>
+  {% endif %}
+</div>
+
+{% if summary %}
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-md mb-md">
+    {% for icon, label, value in [('school','Courses', summary.total_courses),
+                                  ('group','Students', summary.total_students),
+                                  ('assignment','Assignments', summary.total_assignments)] %}
+      <div class="p-md rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card">
+        <span class="material-symbols-outlined text-primary">{{ icon }}</span>
+        <p class="font-geist text-headline-md text-on-surface dark:text-inverse-on-surface mt-base">{{ value or 0 }}</p>
+        <p class="font-geist text-label-md text-on-surface-variant">{{ label }}</p>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% if courses %}
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter">
+    {% for c in courses %}
+      {% include "_partials/course_card.html" %}
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="p-xl rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card text-center">
+    <span class="material-symbols-outlined text-[64px] text-outline">school</span>
+    <p class="font-inter text-body-lg text-on-surface-variant mt-xs">
+      {% if session.get('role') == 'instructor' %}
+        You haven't created any courses yet.
+      {% else %}
+        You're not enrolled in any courses. Browse and join one to get started.
+      {% endif %}
+    </p>
+    <div class="mt-sm">
+      {% if session.get('role') == 'instructor' %}
+        <a href="{{ url_for('courses.create') }}" class="px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-geist text-label-md inline-flex items-center gap-xs hover:shadow-hover transition-all">
+          <span class="material-symbols-outlined">add</span> Create your first course
+        </a>
+      {% else %}
+        <a href="{{ url_for('courses.browse') }}" class="px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-geist text-label-md inline-flex items-center gap-xs hover:shadow-hover transition-all">
+          <span class="material-symbols-outlined">explore</span> Browse courses
+        </a>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,66 @@
+{# Reusable course card. Expects `c` (a row dict) with at minimum:
+   course_id, course_name, join_code, instructor_name (or instructor_id).
+   Optional: course_code, progress_pct, upcoming_count, enrolled_count,
+   avg_grade. #}
+
+{% set gradients = [
+  'from-[#2563eb] to-[#3e3fcc]',
+  'from-[#006c49] to-[#10b981]',
+  'from-[#3e3fcc] to-[#6366f1]',
+  'from-[#ba1a1a] to-[#f59e0b]',
+  'from-[#004ac6] to-[#0ea5e9]',
+  'from-[#7c3aed] to-[#2563eb]'
+] %}
+{% set grad = gradients[c.course_id % gradients|length] %}
+{% set code = c.course_code or c.join_code or '' %}
+{% set name = c.instructor_name or '' %}
+{% set initials = (name.split()|map('first')|join('')|upper)[:2] if name else '?' %}
+
+<a href="{{ url_for('courses.detail', course_id=c.course_id) }}"
+   class="block bg-surface-container-lowest dark:bg-[#1d2123] rounded-xl overflow-hidden
+          border border-outline-variant/40 shadow-card card-hover flex flex-col">
+  <div class="h-[140px] relative bg-gradient-to-br {{ grad }}">
+    <div class="absolute inset-0 p-md flex flex-col justify-end">
+      {% if code %}
+        <span class="bg-white/20 backdrop-blur-sm text-white font-geist text-label-sm w-fit px-2 py-1 rounded uppercase tracking-wider">{{ code }}</span>
+      {% endif %}
+      <h3 class="font-geist text-headline-sm text-white mt-xs line-clamp-2">{{ c.course_name }}</h3>
+    </div>
+  </div>
+
+  <div class="p-md flex-1 flex flex-col gap-sm">
+    <div class="flex justify-between items-center">
+      <div class="flex items-center gap-xs">
+        <div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container
+                    font-geist text-label-sm flex items-center justify-center">{{ initials }}</div>
+        <span class="font-inter text-body-sm text-on-surface dark:text-inverse-on-surface">{{ name }}</span>
+      </div>
+      {% if c.upcoming_count is defined and c.upcoming_count > 0 %}
+        <span class="px-2 py-1 bg-error-container text-on-error-container rounded-full font-geist text-label-sm flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">warning</span>{{ c.upcoming_count }} due
+        </span>
+      {% elif c.enrolled_count is defined %}
+        <span class="px-2 py-1 bg-surface-container-high text-on-surface-variant rounded-full font-geist text-label-sm flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">group</span>{{ c.enrolled_count }}
+        </span>
+      {% endif %}
+    </div>
+
+    {% if c.progress_pct is defined and c.progress_pct is not none %}
+      <div class="mt-auto">
+        <div class="flex justify-between font-geist text-label-md mb-xs">
+          <span class="text-on-surface-variant">Progress</span>
+          <span class="text-primary font-bold">{{ c.progress_pct }}%</span>
+        </div>
+        <div class="w-full bg-surface-container dark:bg-inverse-surface rounded-full h-2">
+          <div class="bg-primary h-full rounded-full transition-all duration-700" style="width: {{ c.progress_pct }}%"></div>
+        </div>
+      </div>
+    {% elif c.avg_grade is defined and c.avg_grade is not none %}
+      <div class="mt-auto font-geist text-label-md flex justify-between">
+        <span class="text-on-surface-variant">Class average</span>
+        <span class="text-primary font-bold">{{ '%.1f'|format(c.avg_grade) }}</span>
+      </div>
+    {% endif %}
+  </div>
+</a>

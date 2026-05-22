@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}{{ assignment.title }} · LMP{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-md">
+  <div class="flex items-center gap-xs">
+    <a href="{{ url_for('courses.detail', course_id=assignment.course_id) }}"
+       class="p-2 rounded-full hover:bg-surface-container">
+      <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <p class="font-geist text-label-md text-on-surface-variant">{{ assignment.course_name }}</p>
+  </div>
+
+  <div class="p-md md:p-lg rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card">
+    <div class="flex items-start justify-between gap-sm">
+      <div class="flex-1">
+        <h1 class="font-geist text-headline-lg text-on-surface dark:text-inverse-on-surface">{{ assignment.title }}</h1>
+        <p class="font-geist text-label-md text-on-surface-variant mt-base">
+          {% if assignment.due_date %}Due {{ assignment.due_date.strftime('%b %d, %Y · %H:%M') }} · {% endif %}{{ assignment.max_marks }} pts
+        </p>
+      </div>
+      {% if role == 'instructor' %}
+        <a href="{{ url_for('assignments.edit', assignment_id=assignment.assignment_id) }}"
+           class="px-md py-sm rounded-lg bg-surface-container-high text-on-surface font-geist text-label-md flex items-center gap-xs hover:shadow-card">
+          <span class="material-symbols-outlined text-[18px]">edit</span> Edit
+        </a>
+      {% endif %}
+    </div>
+
+    {% if assignment.description %}
+      <p class="font-inter text-body-md text-on-surface dark:text-inverse-on-surface mt-md whitespace-pre-wrap">{{ assignment.description }}</p>
+    {% endif %}
+
+    {% if assignment.attachment_path %}
+      <a href="{{ url_for('serve_upload', relative_path=assignment.attachment_path) }}"
+         class="mt-md inline-flex items-center gap-xs px-md py-sm rounded-lg bg-primary-fixed text-on-primary-fixed-variant font-geist text-label-md hover:bg-primary-fixed-dim transition">
+        <span class="material-symbols-outlined">attach_file</span> Download attachment
+      </a>
+    {% endif %}
+  </div>
+
+  {% if role == 'student' %}
+    <div class="p-md rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card">
+      <h2 class="font-geist text-headline-sm text-on-surface dark:text-inverse-on-surface mb-sm">Your submission</h2>
+
+      {% if my_submission %}
+        <div class="space-y-base">
+          <a href="{{ url_for('serve_upload', relative_path=my_submission.file_path) }}"
+             class="inline-flex items-center gap-xs px-md py-sm rounded-lg bg-surface-container-high text-on-surface font-geist text-label-md hover:shadow-card">
+            <span class="material-symbols-outlined">description</span> Current submission
+          </a>
+          <p class="font-geist text-label-sm text-on-surface-variant">
+            Submitted {{ my_submission.submitted_at.strftime('%b %d, %Y · %H:%M') }}
+          </p>
+          {% if my_submission.grade is not none %}
+            <div class="p-md rounded-lg bg-secondary-container/40 border border-secondary/20">
+              <p class="font-geist text-label-sm text-on-secondary-container">Grade</p>
+              <p class="font-geist text-headline-md text-on-secondary-container">{{ my_submission.grade }}<span class="text-on-secondary-container/70 text-headline-sm">/{{ assignment.max_marks }}</span></p>
+              {% if my_submission.feedback %}<p class="font-inter text-body-sm text-on-secondary-container mt-base">{{ my_submission.feedback }}</p>{% endif %}
+            </div>
+          {% else %}
+            <span class="inline-block px-md py-base rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant font-geist text-label-sm">Awaiting grade</span>
+          {% endif %}
+        </div>
+        <p class="font-geist text-label-sm text-on-surface-variant mt-sm">Need to re-submit? Upload a new file below — it will replace the previous one.</p>
+      {% endif %}
+
+      <form action="{{ url_for('submissions.submit', assignment_id=assignment.assignment_id) }}" method="post" enctype="multipart/form-data"
+            class="mt-sm flex items-center gap-xs flex-wrap">
+        <input name="file" type="file" required
+               class="font-inter text-body-sm file:mr-sm file:px-md file:py-base file:rounded-lg file:border-0 file:bg-primary-fixed file:text-on-primary-fixed-variant file:font-geist file:text-label-md hover:file:bg-primary-fixed-dim cursor-pointer" />
+        <button class="px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-geist text-label-md hover:shadow-hover transition">
+          {% if my_submission %}Replace submission{% else %}Submit{% endif %}
+        </button>
+      </form>
+    </div>
+
+  {% else %}
+    <div class="p-md rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card">
+      <h2 class="font-geist text-headline-sm text-on-surface dark:text-inverse-on-surface mb-sm">
+        Submissions <span class="text-on-surface-variant/70 font-normal">({{ all_submissions|length }})</span>
+      </h2>
+      {% if all_submissions %}
+        <div class="divide-y divide-outline-variant/20">
+          {% for s in all_submissions %}
+            <div class="py-sm flex items-center justify-between gap-xs">
+              <div class="flex items-center gap-xs flex-1 min-w-0">
+                {% set si = (s.student_name.split()|map('first')|join('')|upper)[:2] %}
+                <div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-geist text-label-sm">{{ si }}</div>
+                <div class="min-w-0">
+                  <p class="font-inter text-body-md text-on-surface dark:text-inverse-on-surface truncate">{{ s.student_name }}</p>
+                  <p class="font-geist text-label-sm text-on-surface-variant truncate">Submitted {{ s.submitted_at.strftime('%b %d, %Y · %H:%M') }}</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-xs">
+                {% if s.grade is none %}
+                  <span class="px-md py-base rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant font-geist text-label-sm">Ungraded</span>
+                {% else %}
+                  <span class="px-md py-base rounded-full bg-secondary-container text-on-secondary-container font-geist text-label-sm">{{ s.grade }}/{{ assignment.max_marks }}</span>
+                {% endif %}
+                <a href="{{ url_for('submissions.grade', submission_id=s.submission_id) }}"
+                   class="px-md py-base rounded-full bg-primary-container text-on-primary-container font-geist text-label-sm hover:shadow-card">Grade</a>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="font-inter text-body-md text-on-surface-variant">No submissions yet.</p>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

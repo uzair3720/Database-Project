@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Grade · {{ sub.assignment_title }} · LMP{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto space-y-md">
+  <div class="flex items-center gap-xs">
+    <a href="{{ url_for('assignments.detail', assignment_id=sub.assignment_id) }}"
+       class="p-2 rounded-full hover:bg-surface-container">
+      <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <p class="font-geist text-label-md text-on-surface-variant">{{ sub.assignment_title }}</p>
+  </div>
+
+  <div class="p-md rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card flex items-center gap-sm">
+    {% set si = (sub.student_name.split()|map('first')|join('')|upper)[:2] %}
+    <div class="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center font-geist text-label-md">{{ si }}</div>
+    <div class="flex-1">
+      <p class="font-inter text-body-md text-on-surface dark:text-inverse-on-surface">{{ sub.student_name }}</p>
+      <a href="{{ url_for('serve_upload', relative_path=sub.file_path) }}"
+         class="inline-flex items-center gap-xs font-geist text-label-md text-primary hover:underline">
+        <span class="material-symbols-outlined text-[16px]">description</span> Download submission
+      </a>
+    </div>
+  </div>
+
+  <form action="{{ url_for('submissions.grade', submission_id=sub.submission_id) }}" method="post"
+        class="p-md rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card space-y-sm">
+    <div class="space-y-base">
+      <label class="font-geist text-label-sm text-on-surface-variant block">Grade <span class="text-on-surface-variant/60">(out of {{ sub.max_marks }}, 0–100)</span></label>
+      <input name="grade" type="number" min="0" max="100" value="{{ sub.grade if sub.grade is not none else '' }}" required
+             class="w-full px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0 outline-none font-inter text-body-md" />
+    </div>
+    <div class="space-y-base">
+      <label class="font-geist text-label-sm text-on-surface-variant block">Feedback</label>
+      <textarea name="feedback" rows="5"
+                class="w-full px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0 outline-none font-inter text-body-md">{{ sub.feedback or '' }}</textarea>
+    </div>
+    <div class="flex justify-end gap-xs pt-base">
+      <a href="{{ url_for('assignments.detail', assignment_id=sub.assignment_id) }}" class="px-md py-sm rounded-lg font-geist text-label-md text-on-surface-variant hover:bg-surface-container">Cancel</a>
+      <button class="px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-geist text-label-md hover:shadow-hover active:scale-[0.98] transition-all">Save grade</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

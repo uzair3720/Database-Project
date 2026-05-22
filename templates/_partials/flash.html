@@ -1,0 +1,27 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="mb-md space-y-base">
+    {% for category, message in messages %}
+      {% set palette = {
+        'success': 'bg-secondary-container text-on-secondary-container',
+        'danger':  'bg-error-container text-on-error-container',
+        'warning': 'bg-tertiary-fixed text-on-tertiary-fixed-variant',
+        'info':    'bg-primary-fixed text-on-primary-fixed-variant',
+      } %}
+      {% set icon = {
+        'success': 'check_circle', 'danger': 'error',
+        'warning': 'warning', 'info': 'info'
+      } %}
+      <div data-flash
+           class="flex items-center gap-sm px-md py-sm rounded-lg shadow-card transition-opacity duration-300
+                  {{ palette.get(category, palette['info']) }}">
+        <span class="material-symbols-outlined">{{ icon.get(category, 'info') }}</span>
+        <span class="font-inter text-body-md flex-1">{{ message }}</span>
+        <button onclick="this.parentElement.remove()" class="opacity-60 hover:opacity-100">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+    {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}

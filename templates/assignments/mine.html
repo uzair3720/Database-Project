@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}My Assignments · LMP{% endblock %}
+{% block content %}
+<h1 class="font-geist text-headline-lg text-on-surface dark:text-inverse-on-surface mb-md">
+  {% if role == 'instructor' %}Assignments I've created{% else %}My assignments{% endif %}
+</h1>
+
+{% if not items %}
+  <div class="p-xl rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card text-center">
+    <span class="material-symbols-outlined text-[64px] text-outline">assignment</span>
+    <p class="font-inter text-body-md text-on-surface-variant mt-xs">Nothing here yet.</p>
+  </div>
+{% else %}
+  <div class="bg-surface-container-lowest dark:bg-[#1d2123] rounded-xl border border-outline-variant/40 shadow-card overflow-hidden">
+    <table class="w-full">
+      <thead>
+        <tr class="text-left font-geist text-label-sm text-on-surface-variant border-b border-outline-variant/30">
+          <th class="px-md py-sm">Assignment</th>
+          <th class="px-md py-sm">Course</th>
+          <th class="px-md py-sm">Due</th>
+          <th class="px-md py-sm">
+            {% if role == 'instructor' %}Submissions{% else %}Status{% endif %}
+          </th>
+        </tr>
+      </thead>
+      <tbody class="font-inter text-body-md">
+        {% for it in items %}
+          <tr class="border-b border-outline-variant/20 hover:bg-surface-container-low dark:hover:bg-inverse-surface">
+            <td class="px-md py-sm">
+              <a class="text-primary hover:underline font-medium" href="{{ url_for('assignments.detail', assignment_id=it.assignment_id) }}">{{ it.title }}</a>
+            </td>
+            <td class="px-md py-sm text-on-surface-variant">
+              <a class="hover:underline" href="{{ url_for('courses.detail', course_id=it.course_id) }}">{{ it.course_name }}</a>
+            </td>
+            <td class="px-md py-sm text-on-surface-variant">
+              {% if it.due_date %}{{ it.due_date.strftime('%b %d, %Y') }}{% else %}—{% endif %}
+            </td>
+            <td class="px-md py-sm">
+              {% if role == 'instructor' %}
+                <span class="font-geist text-label-md text-on-surface-variant">{{ it.submitted_count }}/{{ it.enrolled_count }}</span>
+                <span class="text-on-surface-variant/60 ml-base">· {{ it.graded_count }} graded</span>
+              {% else %}
+                {% if it.grade is not none %}
+                  <span class="px-md py-base rounded-full bg-secondary-container text-on-secondary-container font-geist text-label-sm">{{ it.grade }}/{{ it.max_marks }}</span>
+                {% elif it.submission_id %}
+                  <span class="px-md py-base rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant font-geist text-label-sm">Submitted</span>
+                {% else %}
+                  <span class="px-md py-base rounded-full bg-error-container text-on-error-container font-geist text-label-sm">Not submitted</span>
+                {% endif %}
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+{% endblock %}

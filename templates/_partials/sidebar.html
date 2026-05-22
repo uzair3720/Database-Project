@@ -1,0 +1,58 @@
+{# Sidebar nav. Active state is computed from request.endpoint. #}
+{% set ep = request.endpoint or '' %}
+{% macro nav_item(href, icon, label, active) -%}
+  <a href="{{ href }}"
+     class="flex items-center gap-sm px-md py-sm rounded-full transition-colors duration-200
+            {% if active %}bg-primary-fixed dark:bg-primary-fixed-dim text-on-primary-fixed-variant dark:text-on-primary-fixed border-l-4 border-primary
+            {% else %}text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface
+            {% endif %}">
+    <span class="material-symbols-outlined {% if active %}icon-fill{% endif %}">{{ icon }}</span>
+    <span class="font-geist text-label-md">{{ label }}</span>
+  </a>
+{%- endmacro %}
+
+<aside id="app-sidebar"
+       class="w-[280px] h-screen sticky top-0 overflow-y-auto
+              bg-surface-container-lowest dark:bg-[#1d2123] border-r border-outline-variant/40
+              shadow-card flex flex-col py-lg px-sm z-40
+              fixed md:sticky md:translate-x-0 -translate-x-full md:flex transition-transform duration-200">
+  <div class="px-md mb-lg">
+    <a href="{{ url_for('dashboard') }}" class="flex items-center gap-xs">
+      <span class="material-symbols-outlined text-primary text-[32px] icon-fill">school</span>
+      <div>
+        <h1 class="font-geist text-headline-sm text-primary dark:text-inverse-primary">UniLMS</h1>
+        <p class="font-geist text-label-sm text-on-surface-variant">Academic Portal</p>
+      </div>
+    </a>
+  </div>
+
+  {% if session.get('role') == 'instructor' %}
+    <a href="{{ url_for('courses.create') }}"
+       class="mx-md mb-md py-sm px-md bg-primary-container text-on-primary-container rounded-full
+              flex items-center justify-center gap-base font-geist text-label-md
+              hover:shadow-hover active:scale-[0.98] transition-all">
+      <span class="material-symbols-outlined">add</span> New Course
+    </a>
+  {% else %}
+    <a href="{{ url_for('courses.join') }}"
+       class="mx-md mb-md py-sm px-md bg-primary-container text-on-primary-container rounded-full
+              flex items-center justify-center gap-base font-geist text-label-md
+              hover:shadow-hover active:scale-[0.98] transition-all">
+      <span class="material-symbols-outlined">add</span> Join Course
+    </a>
+  {% endif %}
+
+  <nav class="flex-1 flex flex-col gap-base">
+    {{ nav_item(url_for('dashboard'),         'home',           'Home',        ep == 'dashboard') }}
+    {{ nav_item(url_for('courses.my_courses'),'school',         'Classes',     ep.startswith('courses.')) }}
+    {{ nav_item(url_for('assignments.mine'),  'assignment',     'Assignments', ep.startswith('assignments.') or ep.startswith('submissions.')) }}
+    {{ nav_item(url_for('calendar.index'),    'calendar_month', 'Calendar',    ep.startswith('calendar.')) }}
+    {{ nav_item(url_for('notifications.index'),'notifications', 'Notifications', ep.startswith('notifications.')) }}
+    {{ nav_item(url_for('courses.browse'),    'explore',        'Browse',      ep == 'courses.browse') }}
+  </nav>
+
+  <div class="mt-auto pt-md border-t border-outline-variant/30 flex flex-col gap-base">
+    {{ nav_item(url_for('profile.index'), 'person',  'Profile', ep.startswith('profile.')) }}
+    {{ nav_item(url_for('auth.logout'),   'logout',  'Logout',  false) }}
+  </div>
+</aside>

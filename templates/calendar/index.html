@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Calendar · LMP{% endblock %}
+{% block content %}
+{% set month_names = ['January','February','March','April','May','June','July','August','September','October','November','December'] %}
+{% set prev_month = month - 1 if month > 1 else 12 %}
+{% set prev_year  = year if month > 1 else year - 1 %}
+{% set next_month = month + 1 if month < 12 else 1 %}
+{% set next_year  = year if month < 12 else year + 1 %}
+
+<div class="flex flex-col lg:flex-row gap-md">
+  <div class="flex-1">
+    <div class="flex items-center justify-between mb-md">
+      <h1 class="font-geist text-headline-lg text-on-surface dark:text-inverse-on-surface">
+        {{ month_names[month-1] }} {{ year }}
+      </h1>
+      <div class="flex items-center gap-xs">
+        <a href="?year={{ prev_year }}&month={{ prev_month }}"
+           class="p-2 rounded-full bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 hover:shadow-card">
+          <span class="material-symbols-outlined">chevron_left</span>
+        </a>
+        <a href="?year={{ today.year }}&month={{ today.month }}"
+           class="px-md py-base rounded-full bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 hover:shadow-card font-geist text-label-md">
+          Today
+        </a>
+        <a href="?year={{ next_year }}&month={{ next_month }}"
+           class="p-2 rounded-full bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 hover:shadow-card">
+          <span class="material-symbols-outlined">chevron_right</span>
+        </a>
+      </div>
+    </div>
+
+    {# Build the grid in Python-ish Jinja: first weekday + total days. #}
+    {% set ns = namespace(first_dow=0, days_in_month=31) %}
+    {% set ns.first_dow = (year, month, 1) | string %} {# placeholder so we render below using JS-less arithmetic #}
+
+    <div class="bg-surface-container-lowest dark:bg-[#1d2123] rounded-xl border border-outline-variant/40 shadow-card p-sm">
+      <div class="grid grid-cols-7 gap-base font-geist text-label-sm text-on-surface-variant mb-base text-center">
+        {% for d in ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] %}<div>{{ d }}</div>{% endfor %}
+      </div>
+
+      {% set days_per_month = {1:31,2:29 if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0) else 28,3:31,4:30,5:31,6:30,7:31,8:31,9:30,10:31,11:30,12:31} %}
+      {% set dim = days_per_month[month] %}
+      {# Zeller-ish: get first weekday Mon=0..Sun=6 via python datetime in template using namespace + a helper variable from format. #}
+      {# We'll use a 0..41 grid and key by day-of-month positioned via a simple offset using a precomputed offset attribute below. #}
+
+      {# Simpler: compute first_weekday in template using a small lookup table from a known anchor.
+         Anchor: 2024-01-01 is a Monday (weekday 0). Use ordinal arithmetic via day_of_year-ish approach.
+         To keep this manageable, we just rely on the server pushing first_dow via the route. #}
+      {% set offset = first_dow if first_dow is defined else 0 %}
+
+      <div class="grid grid-cols-7 gap-base">
+        {% for _ in range(offset) %}<div class="aspect-square"></div>{% endfor %}
+        {% for day in range(1, dim + 1) %}
+          {% set iso = '%04d-%02d-%02d' | format(year, month, day) %}
+          {% set events = by_day.get(iso, []) %}
+          {% set is_today = (day == today.day and month == today.month and year == today.year) %}
+          <div class="aspect-square p-base rounded-md border
+                      {% if is_today %}border-primary bg-primary-fixed/40 dark:bg-primary-fixed-dim/10{% else %}border-outline-variant/30{% endif %}
+                      flex flex-col">
+            <span class="font-geist text-label-md {% if is_today %}text-primary{% else %}text-on-surface-variant{% endif %}">{{ day }}</span>
+            <div class="flex-1 overflow-hidden space-y-[2px] mt-base">
+              {% for ev in events[:2] %}
+                <a href="{{ url_for('assignments.detail', assignment_id=ev.assignment_id) }}"
+                   class="block bg-primary-container text-on-primary-container text-[10px] leading-tight px-base py-[2px] rounded truncate hover:bg-primary">
+                  {{ ev.title }}
+                </a>
+              {% endfor %}
+              {% if events|length > 2 %}
+                <span class="text-[10px] text-on-surface-variant">+{{ events|length - 2 }} more</span>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <aside class="w-full lg:w-[320px] shrink-0">
+    <h2 class="font-geist text-headline-sm text-on-surface dark:text-inverse-on-surface mb-sm">Upcoming</h2>
+    {% if not upcoming %}
+      <p class="font-inter text-body-sm text-on-surface-variant">Nothing on the horizon.</p>
+    {% else %}
+      <div class="space-y-base">
+      {% for ev in upcoming %}
+        <a href="{{ url_for('assignments.detail', assignment_id=ev.assignment_id) }}"
+           class="block p-md rounded-lg bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card hover:shadow-hover transition">
+          <p class="font-geist text-label-sm text-primary">{{ ev.due_date.strftime('%a %b %d · %H:%M') }}</p>
+          <p class="font-inter text-body-md text-on-surface dark:text-inverse-on-surface line-clamp-2">{{ ev.title }}</p>
+          <p class="font-geist text-label-sm text-on-surface-variant mt-base">{{ ev.course_name }}</p>
+        </a>
+      {% endfor %}
+      </div>
+    {% endif %}
+  </aside>
+</div>
+{% endblock %}

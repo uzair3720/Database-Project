@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UniLMS Premium - CS2001 Data Structures</title>
+<!-- Google Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#e0e3e5",
+                    "on-tertiary-fixed": "#07006c",
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#d8dadc",
+                    "background": "#f7f9fb",
+                    "tertiary-fixed": "#e1e0ff",
+                    "error-container": "#ffdad6",
+                    "secondary": "#006c49",
+                    "on-tertiary-container": "#f1eeff",
+                    "outline-variant": "#c3c6d7",
+                    "surface-container-low": "#f2f4f6",
+                    "primary-container": "#2563eb",
+                    "on-error": "#ffffff",
+                    "inverse-on-surface": "#eff1f3",
+                    "inverse-surface": "#2d3133",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "on-tertiary-fixed-variant": "#2f2ebe",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "surface-container": "#eceef0",
+                    "secondary-container": "#6cf8bb",
+                    "on-secondary-fixed-variant": "#005236",
+                    "on-secondary-container": "#00714d",
+                    "error": "#ba1a1a",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#e0e3e5",
+                    "primary-fixed": "#dbe1ff",
+                    "surface-container-high": "#e6e8ea",
+                    "surface": "#f7f9fb",
+                    "tertiary": "#3e3fcc",
+                    "on-surface-variant": "#434655",
+                    "tertiary-container": "#585be6",
+                    "surface-tint": "#0053db",
+                    "on-surface": "#191c1e",
+                    "on-primary-container": "#eeefff",
+                    "surface-bright": "#f7f9fb",
+                    "on-error-container": "#93000a",
+                    "on-background": "#191c1e",
+                    "inverse-primary": "#b4c5ff",
+                    "primary": "#004ac6",
+                    "on-primary-fixed": "#00174b",
+                    "on-tertiary": "#ffffff",
+                    "outline": "#737686",
+                    "on-secondary-fixed": "#002113",
+                    "secondary-fixed-dim": "#4edea3",
+                    "tertiary-fixed-dim": "#c0c1ff",
+                    "secondary-fixed": "#6ffbbe",
+                    "on-primary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "12px",
+                    "xl": "16px",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "40px",
+                    "sm": "16px",
+                    "md": "24px",
+                    "gutter": "24px",
+                    "lg": "32px",
+                    "xs": "8px",
+                    "base": "4px",
+                    "xl": "48px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "headline-sm": ["Geist"],
+                    "body-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "display-lg": ["Geist"],
+                    "label-sm": ["Geist"],
+                    "label-md": ["Geist"],
+                    "headline-lg": ["Geist"],
+                    "headline-md": ["Geist"]
+            },
+            "fontSize": {
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { background-color: #f7f9fb; font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .transition-all { transition: all 0.2s ease-out; }
+        .elevation-1 { shadow: 0px 4px 20px rgba(0, 0, 0, 0.04); }
+        .active-pill { border-left: 4px solid #004ac6; }
+    </style>
+</head>
+<body class="flex min-h-screen text-on-surface">
+<!-- Shared SideNavBar -->
+<aside class="w-[280px] h-screen sticky left-0 top-0 overflow-y-auto bg-surface-container-lowest dark:bg-inverse-surface shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border-r border-outline-variant flex flex-col py-lg px-sm">
+<div class="px-md mb-xl">
+<h1 class="text-headline-md font-headline-md font-bold text-primary dark:text-inverse-primary">UniLMS Premium</h1>
+<p class="text-label-md font-label-md text-on-surface-variant">Academic Portal</p>
+</div>
+<button class="mx-md mb-lg flex items-center justify-center gap-xs bg-primary text-on-primary py-sm rounded-full font-label-md shadow-md hover:scale-[0.98] transition-transform">
+<span class="material-symbols-outlined">add</span>
+<span>New Request</span>
+</button>
+<nav class="flex flex-col gap-base grow">
+<!-- Home -->
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container transition-colors duration-200 rounded-full" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-body-md font-body-md">Home</span>
+</a>
+<!-- Classes -->
+<a class="flex items-center gap-sm px-md py-sm bg-primary-container text-on-primary-container rounded-full border-l-4 border-primary" href="#">
+<span class="material-symbols-outlined">school</span>
+<span class="text-body-md font-body-md">Classes</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container transition-colors duration-200 rounded-full" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="text-body-md font-body-md">Assignments</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container transition-colors duration-200 rounded-full" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="text-body-md font-body-md">Calendar</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container transition-colors duration-200 rounded-full" href="#">
+<span class="material-symbols-outlined">chat</span>
+<span class="text-body-md font-body-md">Messages</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container transition-colors duration-200 rounded-full" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-body-md font-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-outline-variant pt-lg">
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container transition-colors duration-200 rounded-full" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="text-body-md font-body-md">Help &amp; Support</span>
+</a>
+</div>
+</aside>
+<div class="flex-1 flex flex-col min-w-0">
+<!-- Shared TopAppBar -->
+<header class="w-full sticky top-0 z-50 h-20 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 flex items-center justify-between px-margin-desktop">
+<div class="flex items-center gap-lg">
+<div class="flex items-center bg-surface-container-low px-md py-xs rounded-full border border-outline-variant/20 focus-within:ring-2 focus-within:ring-primary transition-all">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-label-md w-64 ml-xs" placeholder="Search resources..." type="text"/>
+</div>
+<nav class="flex gap-lg">
+<a class="text-primary font-bold border-b-2 border-primary pb-base text-label-md" href="#">Stream</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors text-label-md" href="#">Classwork</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors text-label-md" href="#">People</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors text-label-md" href="#">Grades</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="hover:bg-surface-variant/20 rounded-full p-2 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<button class="hover:bg-surface-variant/20 rounded-full p-2 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">apps</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary shadow-sm hover:scale-105 transition-transform cursor-pointer">
+<img alt="Student Profile Avatar" data-alt="A close-up portrait of a professional student with a focused and friendly expression, set against a blurred academic background. The lighting is soft and natural, emphasizing a bright, contemporary aesthetic. The color palette is composed of clean whites and soft grays, matching a premium university LMS branding." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsWAhYcsG_ot1VsDLkRNxotDj6OHcM-EGAxfg5OT_wxgjienBcbdhz-kGYFg4EzRp51cSaoXfqXfxMC93ccWo2e1j4d_4RjbxsIZRKaEr6PWn7_NVMtv0wFzuu2qdPtFDrGgNqX4znmRiUTZ6neOqd18fQPuxx2eBK7zFALA2xhUeYgizSe06CA66nWdIFHHPeQJ2PH9-WL9K1poiUR2IZIjthdCh0sN8gLJB2LunIh07tmla5yZqm6-iRT225hkXtlQC4hCn8kBw"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="p-margin-desktop flex flex-col gap-lg max-w-6xl mx-auto w-full">
+<!-- Hero Banner -->
+<section class="relative w-full h-[240px] rounded-xl overflow-hidden shadow-lg group">
+<div class="absolute inset-0 bg-gradient-to-r from-primary to-tertiary-container mix-blend-multiply opacity-60"></div>
+<img alt="Course Background" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="An abstract, high-resolution digital background featuring intricate geometric patterns and glowing blue lines representing data structures and algorithms. The scene is illuminated with a futuristic, clean light-mode aesthetic, with deep blues and crisp whites. The mood is academic yet technologically advanced, perfect for a premium computer science course portal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCruxSkyYn3W8A9nzJcX765ClZjbrb1UrWDVb9uaF1z92gCcPmAGJL_cwbeKPSrnHxKMdcfrBHbAlRaHIiAorgsCoUvFe301BH54N2PdykuzBll6ScCSRkkRFq--ns5KVoN8NgqekZ_ufl-hw-oExlwS3SfWopgH0CTHlK9xVnprVgrRUPfqyqWkFzwOz_dTg7iYjJqkKtXkS7HgsaYUXtX8yMPEUhChezNI6fOoG4a5HXnjCR4Xjl-P8Un8TnvJLzwcgZFxX21_Ng"/>
+<div class="absolute bottom-0 left-0 p-lg text-white">
+<h2 class="text-display-lg font-display-lg mb-base leading-tight">CS2001 - Data Structures</h2>
+<p class="text-headline-sm font-headline-sm opacity-90">BCS/SE-4A/4B [Spring-2026]</p>
+<div class="mt-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-sm">person</span>
+<span class="text-label-md font-label-md">Instructor: Dr. Arsalan Shahid</span>
+</div>
+</div>
+<button class="absolute bottom-lg right-lg w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center hover:bg-white/40 transition-all">
+<span class="material-symbols-outlined text-white">info</span>
+</button>
+</section>
+<!-- Layout Grid: Stream Feed + Widget -->
+<div class="grid grid-cols-12 gap-gutter items-start">
+<!-- Left Column: Stream Feed -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-md">
+<!-- Share Something Input -->
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-outline-variant/30 flex items-center gap-md group">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">person</span>
+</div>
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-body-md text-on-surface-variant cursor-pointer group-hover:text-on-surface transition-colors" placeholder="Share something with your class..." type="text"/>
+<div class="flex gap-xs">
+<button class="p-2 rounded-full hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">attachment</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">image</span>
+</button>
+</div>
+</div>
+<!-- Announcement Card 1 -->
+<article class="bg-surface-container-lowest rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-outline-variant/30 overflow-hidden hover:shadow-md transition-all duration-300">
+<div class="p-md border-b border-outline-variant/20 flex justify-between items-start">
+<div class="flex gap-md">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">school</span>
+</div>
+<div>
+<h4 class="text-body-md font-bold">Dr. Arsalan Shahid</h4>
+<p class="text-label-sm text-on-surface-variant">May 6 • Edited 10:45 AM</p>
+</div>
+</div>
+<button class="p-2 rounded-full hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</button>
+</div>
+<div class="p-md space-y-md">
+<p class="text-body-md text-on-surface leading-relaxed">
+<strong>Announcement: Viva Session &amp; Quiz Distribution</strong><br/><br/>
+                                Dear Students,<br/>
+                                Please be advised that the viva session for the remaining students of the aforementioned sections will be held tomorrow in <strong>Lab 4</strong>. Additionally, you may collect your Quiz #02 and #03 results during this time.
+                            </p>
+<div class="bg-surface-container-low p-md rounded-lg border border-outline-variant/20">
+<h5 class="text-label-sm text-on-surface-variant uppercase mb-xs tracking-wider">Schedule &amp; Venue</h5>
+<ul class="space-y-base text-body-sm">
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-[16px]">calendar_today</span> Wednesday, May 14, 2026</li>
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-[16px]">schedule</span> 11:15 AM - 01:00 PM</li>
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-[16px]">location_on</span> CS Lab 04</li>
+</ul>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md border-t border-outline-variant/20 flex flex-col gap-md">
+<div class="flex items-center justify-between text-label-md text-primary font-bold cursor-pointer hover:underline">
+<span>3 class comments</span>
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+<!-- Comment Input -->
+<div class="flex gap-md items-center">
+<div class="w-8 h-8 rounded-full overflow-hidden">
+<img alt="Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDl9tqtqOtsALlH5IE6vZ5ZELetfCZFoV9BUR8SHqLKthzJ6nXhXoqn7aXsbzZNhgCpZYD_uiQuWYelS0Cb6czUjLHOdzd5hskfk8O4vAYHUa2CqhpSjrTr7ZteH5ccUBiZEe4kfaKnN3sYE9417wtSVXT697HCAn2yoB9__pBv5HZDhfcMGWOl8-9perZ3Cug3VbGChK96tDvy1GOsxISkxcss4ArpT0VtnHgBgdFsuUNLrs5WrkxqIS_2eU7JCADuPbkJtnRPOEo"/>
+</div>
+<div class="flex-1 bg-surface-container px-md py-base rounded-full border border-outline-variant/10 flex items-center">
+<input class="bg-transparent border-none focus:ring-0 text-body-sm w-full" placeholder="Add class comment..." type="text"/>
+<button class="material-symbols-outlined text-outline hover:text-primary transition-colors">send</button>
+</div>
+</div>
+</div>
+</article>
+<!-- Announcement Card 2 (Material Upload) -->
+<article class="bg-surface-container-lowest rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-outline-variant/30 overflow-hidden hover:shadow-md transition-all duration-300">
+<div class="p-md border-b border-outline-variant/20 flex justify-between items-start">
+<div class="flex gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div>
+<h4 class="text-body-md font-bold">New Material: Lecture 12 - Binary Search Trees</h4>
+<p class="text-label-sm text-on-surface-variant">May 4</p>
+</div>
+</div>
+<button class="p-2 rounded-full hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</button>
+</div>
+<div class="p-md">
+<p class="text-body-md text-on-surface mb-md">Slide deck and implementation notes for BST operations (Insert, Delete, Search) have been uploaded. Please review before the lab session.</p>
+<div class="flex items-center gap-md border border-outline-variant/30 rounded-lg p-sm hover:bg-surface-container transition-all cursor-pointer">
+<div class="w-12 h-12 bg-red-50 rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-error text-3xl">picture_as_pdf</span>
+</div>
+<div class="flex-1">
+<p class="text-label-md font-bold">Lecture-12-BST-Final.pdf</p>
+<p class="text-label-sm text-on-surface-variant">PDF Document • 4.2 MB</p>
+</div>
+</div>
+</div>
+<div class="p-md border-t border-outline-variant/20">
+<button class="text-label-md text-primary font-bold hover:underline">Add class comment</button>
+</div>
+</article>
+</div>
+<!-- Right Column: Sidebar Widgets -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-lg sticky top-[104px]">
+<!-- Upcoming Widget -->
+<section class="bg-surface-container-lowest p-md rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-outline-variant/30">
+<div class="flex justify-between items-center mb-md">
+<h3 class="text-headline-sm font-headline-sm">Upcoming</h3>
+<span class="material-symbols-outlined text-on-surface-variant">event</span>
+</div>
+<div class="flex flex-col gap-md">
+<!-- Assignment 1 -->
+<div class="flex gap-md group cursor-pointer">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex flex-col items-center justify-center shrink-0 group-hover:bg-primary-container group-hover:text-on-primary-container transition-all">
+<span class="text-[10px] font-bold uppercase">May</span>
+<span class="text-body-lg font-bold">18</span>
+</div>
+<div>
+<p class="text-label-md font-bold line-clamp-1 group-hover:text-primary transition-colors">Hashing Algorithms Lab Report</p>
+<p class="text-label-sm text-on-surface-variant italic">Due 11:59 PM</p>
+</div>
+</div>
+<!-- Assignment 2 -->
+<div class="flex gap-md group cursor-pointer">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex flex-col items-center justify-center shrink-0 group-hover:bg-primary-container group-hover:text-on-primary-container transition-all">
+<span class="text-[10px] font-bold uppercase">May</span>
+<span class="text-body-lg font-bold">21</span>
+</div>
+<div>
+<p class="text-label-md font-bold line-clamp-1 group-hover:text-primary transition-colors">Mid-Term Project Proposal</p>
+<p class="text-label-sm text-on-surface-variant italic">Due 10:00 AM</p>
+</div>
+</div>
+</div>
+<a class="mt-lg block text-center py-sm rounded-lg text-primary font-bold text-label-md border border-primary/20 hover:bg-primary/5 transition-all" href="#">View all work</a>
+</section>
+<!-- Course Resources Bento Card -->
+<section class="bg-primary p-md rounded-xl text-on-primary shadow-lg overflow-hidden relative group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full group-hover:scale-125 transition-transform"></div>
+<h3 class="text-label-md font-bold mb-xs relative">QUICK ACCESS</h3>
+<p class="text-body-sm opacity-90 mb-md relative">Course syllabus, grades and community resources.</p>
+<div class="grid grid-cols-2 gap-sm relative">
+<button class="bg-white/10 p-sm rounded-lg flex flex-col gap-xs hover:bg-white/20 transition-all text-left">
+<span class="material-symbols-outlined text-sm">folder</span>
+<span class="text-label-sm">Class Drive</span>
+</button>
+<button class="bg-white/10 p-sm rounded-lg flex flex-col gap-xs hover:bg-white/20 transition-all text-left">
+<span class="material-symbols-outlined text-sm">auto_graph</span>
+<span class="text-label-sm">My Grades</span>
+</button>
+</div>
+</section>
+</div>
+</div>
+</main>
+</div>
+<!-- Micro-interaction Scripts -->
+<script>
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                if (e.target.innerText !== 'Stream') {
+                    // Placeholder for navigation interaction
+                    console.log('Navigating to:', e.target.innerText);
+                }
+            });
+        });
+
+        // Simple shadow lift effect on cards
+        const cards = document.querySelectorAll('article');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-2px)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body></html>

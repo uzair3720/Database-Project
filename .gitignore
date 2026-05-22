@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+
+# Environment
+.env
+
+# Uploads (we don't commit student files)
+uploads/
+
+# OS / editor junk
+.DS_Store
+.vscode/
+.idea/
+
+# Flask
+instance/

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{{ quiz.title }} — Scores · LMP{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto space-y-md">
+  <div class="flex items-center justify-between flex-wrap gap-sm">
+    <div>
+      <p class="font-geist text-label-md text-on-surface-variant">Quiz</p>
+      <h1 class="font-geist text-headline-lg text-on-surface dark:text-inverse-on-surface">{{ quiz.title }}</h1>
+      <p class="font-geist text-label-md text-on-surface-variant mt-base">{{ quiz.total_marks }} pts</p>
+    </div>
+    <a href="{{ url_for('quizzes.edit', quiz_id=quiz.quiz_id) }}"
+       class="px-md py-sm rounded-lg bg-surface-container-high text-on-surface font-geist text-label-md flex items-center gap-xs hover:shadow-card">
+      <span class="material-symbols-outlined text-[18px]">edit</span> Edit
+    </a>
+  </div>
+
+  <form action="{{ url_for('quizzes.enter_scores', quiz_id=quiz.quiz_id) }}" method="post"
+        class="p-md rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card">
+    {% if students %}
+      <div class="divide-y divide-outline-variant/20">
+        {% for s in students %}
+          {% set si = (s.student_name.split()|map('first')|join('')|upper)[:2] %}
+          <div class="py-base flex items-center gap-sm">
+            <div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-geist text-label-sm">{{ si }}</div>
+            <p class="font-inter text-body-md text-on-surface dark:text-inverse-on-surface flex-1">{{ s.student_name }}</p>
+            <input name="score_{{ s.student_id }}" type="number" min="0" max="{{ quiz.total_marks }}"
+                   value="{{ s.score if s.score is not none else '' }}" placeholder="—"
+                   class="w-24 px-md py-base rounded-lg bg-surface-container-low dark:bg-inverse-surface border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0 outline-none font-inter text-body-md text-right" />
+            <span class="font-geist text-label-sm text-on-surface-variant w-12">/{{ quiz.total_marks }}</span>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="flex justify-end pt-sm">
+        <button class="px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-geist text-label-md hover:shadow-hover active:scale-[0.98] transition-all">Save scores</button>
+      </div>
+    {% else %}
+      <p class="font-inter text-body-md text-on-surface-variant">No students enrolled in this course yet.</p>
+    {% endif %}
+  </form>
+</div>
+{% endblock %}
