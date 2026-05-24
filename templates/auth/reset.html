@@ -1,0 +1,28 @@
+{% extends "auth/_layout.html" %}
+{% block title %}Choose new password · LMP{% endblock %}
+{% block auth_form %}
+  <header class="mb-md">
+    <h2 class="font-geist text-headline-lg text-on-surface dark:text-inverse-on-surface mb-base">New password</h2>
+    <p class="font-inter text-body-md text-on-surface-variant">Pick a password you'll remember.</p>
+  </header>
+  <form action="{{ url_for('auth.reset', token=token) }}" method="post" class="space-y-md">
+    <div class="space-y-base">
+      <label class="font-geist text-label-sm text-on-surface-variant block">New password</label>
+      <input name="password" type="password" required autofocus
+             class="w-full px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface
+                    border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0
+                    font-inter text-body-md outline-none" />
+    </div>
+    <div class="space-y-base">
+      <label class="font-geist text-label-sm text-on-surface-variant block">Confirm password</label>
+      <input name="confirm" type="password" required
+             class="w-full px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface
+                    border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0
+                    font-inter text-body-md outline-none" />
+    </div>
+    <button class="w-full bg-primary-container text-on-primary-container py-md rounded-lg
+                   font-geist text-label-md hover:shadow-hover active:scale-[0.98] transition-all">
+      Update password
+    </button>
+  </form>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="min-h-screen flex items-center justify-center p-margin-mobile md:p-margin-desktop">
+  <main class="animate-entry w-full max-w-[1100px] grid grid-cols-1 md:grid-cols-2
+               bg-surface-container-lowest dark:bg-[#1d2123]
+               rounded-xl overflow-hidden shadow-modal min-h-[640px]">
+
+    <!-- Branding panel -->
+    <section class="relative hidden md:flex flex-col justify-between p-xl overflow-hidden bg-primary">
+      <div class="absolute inset-0 opacity-20 pointer-events-none">
+        <div class="absolute -top-20 -left-20 w-80 h-80 bg-white rounded-full blur-3xl"></div>
+        <div class="absolute bottom-40 right-0 w-96 h-96 bg-secondary-container rounded-full blur-[100px]"></div>
+      </div>
+      <div class="relative z-10">
+        <div class="flex items-center gap-xs">
+          <span class="material-symbols-outlined icon-fill text-on-primary text-[40px]">school</span>
+          <h1 class="font-geist text-headline-md text-on-primary">UniLMS Premium</h1>
+        </div>
+        <p class="font-inter text-body-lg text-primary-fixed mt-sm max-w-[320px]">
+          The next generation of academic excellence and collaborative learning.
+        </p>
+      </div>
+      <div class="relative z-10">
+        <div class="p-md bg-white/10 backdrop-blur-md rounded-lg border border-white/20 shadow-card max-w-[400px]">
+          <span class="material-symbols-outlined text-secondary-container mb-xs">format_quote</span>
+          <p class="font-inter text-body-md text-white italic">
+            "Managing assignments, grades, and announcements in one place keeps the whole class on the same page."
+          </p>
+          <p class="font-geist text-label-md text-white mt-sm">Group 15 · FAST NUCES</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Form panel -->
+    <section class="flex flex-col justify-center p-md md:p-xl">
+      <div class="max-w-[420px] mx-auto w-full">
+        {% include "_partials/flash.html" %}
+        {% block auth_form %}{% endblock %}
+      </div>
+    </section>
+  </main>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "auth/_layout.html" %}
+{% block title %}Sign in · LMP{% endblock %}
+{% block auth_form %}
+  <header class="mb-md">
+    <h2 class="font-geist text-headline-lg text-on-surface dark:text-inverse-on-surface mb-base">Welcome back</h2>
+    <p class="font-inter text-body-md text-on-surface-variant">Sign in with your academic email.</p>
+  </header>
+
+  <form action="{{ url_for('auth.login') }}" method="post" class="space-y-md">
+    <div class="space-y-base">
+      <label for="email" class="font-geist text-label-sm text-on-surface-variant block">Email</label>
+      <div class="relative">
+        <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">alternate_email</span>
+        <input id="email" name="email" type="email" required autofocus
+               placeholder="student@university.edu"
+               class="w-full pl-xl pr-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface
+                      border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0
+                      font-inter text-body-md outline-none transition-all" />
+      </div>
+    </div>
+
+    <div class="space-y-base">
+      <label for="password" class="font-geist text-label-sm text-on-surface-variant block">Password</label>
+      <div class="relative">
+        <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">lock</span>
+        <input id="password" name="password" type="password" required
+               placeholder="••••••••"
+               class="w-full pl-xl pr-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface
+                      border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0
+                      font-inter text-body-md outline-none transition-all" />
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between">
+      <label class="flex items-center gap-xs cursor-pointer">
+        <input type="checkbox" name="remember"
+               class="w-4 h-4 rounded text-primary focus:ring-primary border-outline-variant" />
+        <span class="font-geist text-label-sm text-on-surface-variant">Remember me for 30 days</span>
+      </label>
+      <a href="{{ url_for('auth.forgot') }}" class="font-geist text-label-sm text-primary hover:underline">Forgot password?</a>
+    </div>
+
+    <button type="submit"
+            class="w-full bg-primary-container text-on-primary-container py-md rounded-lg
+                   font-geist text-label-md shadow-card hover:shadow-hover hover:-translate-y-[1px]
+                   active:scale-[0.98] transition-all">
+      Sign in
+    </button>
+  </form>
+
+  <p class="text-center font-inter text-body-sm text-on-surface-variant pt-md">
+    Don't have an account?
+    <a href="{{ url_for('auth.signup') }}" class="font-geist text-label-md text-primary hover:underline">Create one</a>
+  </p>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "auth/_layout.html" %}
+{% block title %}Create account · LMP{% endblock %}
+{% block auth_form %}
+  <header class="mb-md">
+    <h2 class="font-geist text-headline-lg text-on-surface dark:text-inverse-on-surface mb-base">Get started</h2>
+    <p class="font-inter text-body-md text-on-surface-variant">Create your UniLMS account.</p>
+  </header>
+
+  <form action="{{ url_for('auth.signup') }}" method="post" class="space-y-md">
+    <div class="space-y-base">
+      <label class="font-geist text-label-sm text-on-surface-variant block">Full name</label>
+      <input name="name" required placeholder="Jane Doe"
+             class="w-full px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface
+                    border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0
+                    font-inter text-body-md outline-none" />
+    </div>
+
+    <div class="space-y-base">
+      <label class="font-geist text-label-sm text-on-surface-variant block">Institutional email</label>
+      <input name="email" type="email" required placeholder="jane.doe@university.edu"
+             class="w-full px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface
+                    border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0
+                    font-inter text-body-md outline-none" />
+    </div>
+
+    <div class="space-y-base">
+      <label class="font-geist text-label-sm text-on-surface-variant block">Password</label>
+      <input name="password" type="password" required placeholder="Min. 6 characters"
+             class="w-full px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface
+                    border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0
+                    font-inter text-body-md outline-none" />
+    </div>
+
+    <div class="space-y-base">
+      <label class="font-geist text-label-sm text-on-surface-variant block">I am a…</label>
+      <div class="grid grid-cols-2 gap-sm">
+        <label class="cursor-pointer">
+          <input type="radio" name="role" value="student" class="peer sr-only" checked />
+          <div class="p-md rounded-lg border border-outline-variant/40 text-center
+                      peer-checked:border-primary peer-checked:bg-primary-fixed peer-checked:text-on-primary-fixed-variant
+                      hover:border-primary transition">
+            <span class="material-symbols-outlined block mx-auto mb-base">person</span>
+            <span class="font-geist text-label-md">Student</span>
+          </div>
+        </label>
+        <label class="cursor-pointer">
+          <input type="radio" name="role" value="instructor" class="peer sr-only" />
+          <div class="p-md rounded-lg border border-outline-variant/40 text-center
+                      peer-checked:border-primary peer-checked:bg-primary-fixed peer-checked:text-on-primary-fixed-variant
+                      hover:border-primary transition">
+            <span class="material-symbols-outlined block mx-auto mb-base">school</span>
+            <span class="font-geist text-label-md">Instructor</span>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <button class="w-full bg-primary-container text-on-primary-container py-md rounded-lg
+                   font-geist text-label-md shadow-card hover:shadow-hover hover:-translate-y-[1px]
+                   active:scale-[0.98] transition-all">
+      Create account
+    </button>
+  </form>
+
+  <p class="text-center font-inter text-body-sm text-on-surface-variant pt-md">
+    Already have an account?
+    <a href="{{ url_for('auth.login') }}" class="font-geist text-label-md text-primary hover:underline">Sign in</a>
+  </p>
+{% endblock %}
