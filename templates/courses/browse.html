@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Browse · LMP{% endblock %}
+{% block content %}
+<h1 class="font-geist text-headline-lg text-on-surface dark:text-inverse-on-surface mb-md">Browse courses</h1>
+
+{% if all_courses %}
+  <div class="bg-surface-container-lowest dark:bg-[#1d2123] rounded-xl border border-outline-variant/40 shadow-card overflow-hidden">
+    <table class="w-full">
+      <thead>
+        <tr class="text-left font-geist text-label-md text-on-surface-variant border-b border-outline-variant/30">
+          <th class="px-md py-sm">Course</th>
+          <th class="px-md py-sm">Instructor</th>
+          <th class="px-md py-sm">Students</th>
+          <th class="px-md py-sm">Join code</th>
+        </tr>
+      </thead>
+      <tbody class="font-inter text-body-md">
+        {% for c in all_courses %}
+          <tr class="border-b border-outline-variant/20 hover:bg-surface-container-low dark:hover:bg-inverse-surface transition">
+            <td class="px-md py-sm">
+              <a href="{{ url_for('courses.detail', course_id=c.course_id) }}" class="text-primary hover:underline font-medium">{{ c.course_name }}</a>
+            </td>
+            <td class="px-md py-sm text-on-surface-variant">{{ c.instructor_name }}</td>
+            <td class="px-md py-sm text-on-surface-variant">{{ c.enrolled_count }}</td>
+            <td class="px-md py-sm">
+              <code class="px-base py-[2px] rounded bg-surface-container-high font-geist text-label-md tracking-wider">{{ c.join_code }}</code>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <p class="font-inter text-body-md text-on-surface-variant">No courses in the system yet.</p>
+{% endif %}
+{% endblock %}

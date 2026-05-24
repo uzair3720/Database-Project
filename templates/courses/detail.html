@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% block title %}{{ course.course_name }} · LMP{% endblock %}
+{% block content %}
+{% set gradients = [
+  'from-[#2563eb] to-[#3e3fcc]', 'from-[#006c49] to-[#10b981]',
+  'from-[#3e3fcc] to-[#6366f1]', 'from-[#ba1a1a] to-[#f59e0b]',
+  'from-[#004ac6] to-[#0ea5e9]', 'from-[#7c3aed] to-[#2563eb]'
+] %}
+{% set grad = gradients[course.course_id % gradients|length] %}
+
+<div class="rounded-xl overflow-hidden bg-gradient-to-br {{ grad }} text-white shadow-card mb-md">
+  <div class="p-md md:p-lg">
+    <div class="flex items-center justify-between flex-wrap gap-sm">
+      <div>
+        <p class="font-geist text-label-sm bg-white/20 backdrop-blur-sm w-fit px-2 py-1 rounded uppercase tracking-wider">
+          {{ course.course_code or course.join_code }}
+        </p>
+        <h1 class="font-geist text-headline-lg md:text-display-lg text-white mt-base">{{ course.course_name }}</h1>
+        <p class="font-inter text-body-md text-white/80 mt-base">Taught by {{ course.instructor_name }}</p>
+      </div>
+      {% if is_owner %}
+        <div class="flex items-center gap-xs">
+          <a href="{{ url_for('courses.edit', course_id=course.course_id) }}"
+             class="px-md py-sm bg-white/15 hover:bg-white/25 rounded-lg font-geist text-label-md backdrop-blur-sm flex items-center gap-xs">
+            <span class="material-symbols-outlined text-[18px]">edit</span> Edit
+          </a>
+          <span class="px-md py-sm bg-white/15 rounded-lg font-geist text-label-md backdrop-blur-sm">
+            <span class="opacity-80">Join code:</span>
+            <code class="ml-base tracking-wider">{{ course.join_code }}</code>
+          </span>
+        </div>
+      {% endif %}
+    </div>
+    {% if course.course_description %}
+      <p class="font-inter text-body-md text-white/90 mt-sm max-w-3xl">{{ course.course_description }}</p>
+    {% endif %}
+  </div>
+</div>
+
+{# Tabs — anchor links to in-page sections #}
+<nav class="flex gap-md mb-md border-b border-outline-variant/40 overflow-x-auto">
+  {% for href, label in [('#stream','Stream'),('#classwork','Classwork'),('#people','People')] %}
+    <a href="{{ href }}" class="pb-base font-geist text-label-md text-on-surface-variant hover:text-primary border-b-[3px] border-transparent hover:border-primary transition-colors">{{ label }}</a>
+  {% endfor %}
+  <a href="{{ url_for('courses.grades', course_id=course.course_id) }}"
+     class="pb-base font-geist text-label-md text-on-surface-variant hover:text-primary border-b-[3px] border-transparent hover:border-primary transition-colors">Grades</a>
+</nav>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-md">
+  <!-- Stream -->
+  <section id="stream" class="lg:col-span-2 space-y-md">
+    <div class="flex items-center justify-between">
+      <h2 class="font-geist text-headline-sm text-on-surface dark:text-inverse-on-surface">Stream</h2>
+      {% if is_owner %}
+        <a href="{{ url_for('announcements.create', course_id=course.course_id) }}"
+           class="px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-geist text-label-md flex items-center gap-xs hover:shadow-hover transition-all">
+          <span class="material-symbols-outlined">campaign</span> New post
+        </a>
+      {% endif %}
+    </div>
+
+    {% if announcements_list %}
+      <div class="space-y-base">
+      {% for a in announcements_list %}
+        <a href="{{ url_for('announcements.detail', announcement_id=a.announcement_id) }}"
+           class="block p-md rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card hover:shadow-hover transition">
+          <div class="flex items-center gap-xs font-geist text-label-sm text-on-surface-variant">
+            <span class="material-symbols-outlined text-[16px]">campaign</span>
+            {{ a.poster_name }} · {{ a.posted_at.strftime('%b %d, %Y') }}
+          </div>
+          <h3 class="font-geist text-headline-sm text-on-surface dark:text-inverse-on-surface mt-base">{{ a.title }}</h3>
+        </a>
+      {% endfor %}
+      </div>
+    {% else %}
+      <p class="font-inter text-body-md text-on-surface-variant p-md rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40">
+        No posts yet.
+      </p>
+    {% endif %}
+
+    <!-- Classwork -->
+    <h2 id="classwork" class="font-geist text-headline-sm text-on-surface dark:text-inverse-on-surface pt-md">Classwork</h2>
+    <div class="space-y-base">
+      {% if is_owner %}
+      <div class="flex items-center gap-xs">
+        <a href="{{ url_for('assignments.create', course_id=course.course_id) }}" class="px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-geist text-label-md flex items-center gap-xs hover:shadow-hover transition-all">
+          <span class="material-symbols-outlined">add</span> Assignment
+        </a>
+        <a href="{{ url_for('quizzes.create', course_id=course.course_id) }}" class="px-md py-sm bg-surface-container-high text-on-surface rounded-lg font-geist text-label-md flex items-center gap-xs hover:shadow-card transition-all">
+          <span class="material-symbols-outlined">quiz</span> Quiz
+        </a>
+      </div>
+      {% endif %}
+
+      {% if assignments_list %}
+        {% for a in assignments_list %}
+          <a href="{{ url_for('assignments.detail', assignment_id=a.assignment_id) }}"
+             class="block p-md rounded-lg bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 hover:shadow-card transition">
+            <div class="flex items-center gap-sm">
+              <span class="w-10 h-10 rounded-full bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined">assignment</span>
+              </span>
+              <div class="flex-1">
+                <p class="font-inter text-body-md text-on-surface dark:text-inverse-on-surface">{{ a.title }}</p>
+                <p class="font-geist text-label-sm text-on-surface-variant">
+                  {% if a.due_date %}Due {{ a.due_date.strftime('%b %d, %Y · %H:%M') }}{% else %}No due date{% endif %} · {{ a.max_marks }} pts
+                </p>
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+      {% endif %}
+
+      {% if quizzes_list %}
+        {% for q in quizzes_list %}
+          <div class="flex items-center justify-between p-md rounded-lg bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40">
+            <div class="flex items-center gap-sm">
+              <span class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined">quiz</span>
+              </span>
+              <div>
+                <p class="font-inter text-body-md text-on-surface dark:text-inverse-on-surface">{{ q.title }}</p>
+                <p class="font-geist text-label-sm text-on-surface-variant">
+                  {{ q.total_marks }} pts
+                  {% if session.get('role') == 'student' and my_quiz_scores.get(q.quiz_id) is not none %}
+                    · Your score: {{ my_quiz_scores[q.quiz_id] }}
+                  {% endif %}
+                </p>
+              </div>
+            </div>
+            {% if is_owner %}
+              <a href="{{ url_for('quizzes.enter_scores', quiz_id=q.quiz_id) }}"
+                 class="px-md py-base rounded-full bg-primary-fixed text-on-primary-fixed-variant font-geist text-label-sm hover:bg-primary-fixed-dim transition">
+                Enter scores
+              </a>
+            {% endif %}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {% if not (assignments_list or quizzes_list) %}
+        <p class="font-inter text-body-md text-on-surface-variant">No assignments or quizzes yet.</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- Right rail -->
+  <aside class="space-y-md">
+    {% if course_avg is not none %}
+      <div class="p-md rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card">
+        <p class="font-geist text-label-md text-on-surface-variant">Class average</p>
+        <p class="font-geist text-display-lg text-primary mt-base">{{ '%.1f'|format(course_avg) }}</p>
+      </div>
+    {% endif %}
+
+    <div id="people" class="p-md rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card">
+      <h2 class="font-geist text-headline-sm text-on-surface dark:text-inverse-on-surface mb-sm">People</h2>
+      <div class="flex items-center gap-xs mb-sm">
+        {% set initials = (course.instructor_name.split()|map('first')|join('')|upper)[:2] %}
+        <div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-geist text-label-md">{{ initials }}</div>
+        <div>
+          <p class="font-inter text-body-md text-on-surface dark:text-inverse-on-surface">{{ course.instructor_name }}</p>
+          <p class="font-geist text-label-sm text-on-surface-variant">Instructor</p>
+        </div>
+      </div>
+
+      {% if students_list %}
+        <p class="font-geist text-label-md text-on-surface-variant mt-sm mb-base">Students ({{ students_list|length }})</p>
+        <ul class="space-y-base">
+          {% for s in students_list %}
+            <li class="flex items-center justify-between gap-xs">
+              {% set si = (s.name.split()|map('first')|join('')|upper)[:2] %}
+              <div class="flex items-center gap-xs flex-1 min-w-0">
+                <div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-geist text-label-sm">{{ si }}</div>
+                <div class="min-w-0">
+                  <p class="font-inter text-body-sm text-on-surface dark:text-inverse-on-surface truncate">{{ s.name }}</p>
+                  <p class="font-geist text-label-sm text-on-surface-variant truncate">{{ s.email }}</p>
+                </div>
+              </div>
+              {% if is_owner %}
+                <form action="{{ url_for('courses.remove_student', course_id=course.course_id, student_id=s.user_id) }}" method="post"
+                      onsubmit="return confirm('Remove {{ s.name }} from this course?');">
+                  <button class="text-error hover:opacity-70" title="Remove">
+                    <span class="material-symbols-outlined text-[18px]">person_remove</span>
+                  </button>
+                </form>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  </aside>
+</div>
+{% endblock %}

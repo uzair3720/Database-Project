@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}New Post · LMP{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+  <h1 class="font-geist text-headline-lg text-on-surface dark:text-inverse-on-surface mb-md">New post</h1>
+  <form action="{{ url_for('announcements.create', course_id=course_id) }}" method="post"
+        class="p-md rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card space-y-sm">
+    <div class="space-y-base">
+      <label class="font-geist text-label-sm text-on-surface-variant block">Title</label>
+      <input name="title" required
+             class="w-full px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0 outline-none font-inter text-body-md" />
+    </div>
+    <div class="space-y-base">
+      <label class="font-geist text-label-sm text-on-surface-variant block">Body</label>
+      <textarea name="content" rows="8" required
+                class="w-full px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0 outline-none font-inter text-body-md"></textarea>
+    </div>
+    <div class="flex justify-end gap-xs pt-base">
+      <a href="{{ url_for('courses.detail', course_id=course_id) }}" class="px-md py-sm rounded-lg font-geist text-label-md text-on-surface-variant hover:bg-surface-container">Cancel</a>
+      <button class="px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-geist text-label-md hover:shadow-hover active:scale-[0.98] transition-all">Publish</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

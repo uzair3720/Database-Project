@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Grades · {{ course.course_name }} · LMP{% endblock %}
+{% block content %}
+<div class="flex items-center gap-xs mb-md">
+  <a href="{{ url_for('courses.detail', course_id=course.course_id) }}"
+     class="p-2 rounded-full hover:bg-surface-container">
+    <span class="material-symbols-outlined">arrow_back</span>
+  </a>
+  <h1 class="font-geist text-headline-lg text-on-surface dark:text-inverse-on-surface">Grades · {{ course.course_name }}</h1>
+</div>
+
+{% if role == 'instructor' %}
+  <div class="bg-surface-container-lowest dark:bg-[#1d2123] rounded-xl border border-outline-variant/40 shadow-card overflow-auto">
+    <table class="min-w-full">
+      <thead>
+        <tr class="bg-surface-container-low dark:bg-inverse-surface text-left font-geist text-label-sm text-on-surface-variant">
+          <th class="px-md py-sm sticky left-0 bg-surface-container-low dark:bg-inverse-surface">Student</th>
+          {% for a in assignments %}
+            <th class="px-md py-sm whitespace-nowrap">{{ a.title }} <span class="text-on-surface-variant/70">/{{ a.max_marks }}</span></th>
+          {% endfor %}
+          {% for q in quizzes %}
+            <th class="px-md py-sm whitespace-nowrap">{{ q.title }} <span class="text-on-surface-variant/70">/{{ q.total_marks }}</span></th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody class="font-inter text-body-sm">
+        {% for s in students %}
+          <tr class="border-t border-outline-variant/20">
+            <td class="px-md py-sm sticky left-0 bg-surface-container-lowest dark:bg-[#1d2123] font-medium">{{ s.student_name }}</td>
+            {% for a in assignments %}
+              {% set g = grade_grid.get((s.student_id, a.assignment_id)) %}
+              <td class="px-md py-sm text-center">
+                {% if g is none %}<span class="text-on-surface-variant/50">—</span>
+                {% else %}<span class="font-geist font-bold">{{ g }}</span>{% endif %}
+              </td>
+            {% endfor %}
+            {% for q in quizzes %}
+              {% set sc = quiz_grid.get((s.student_id, q.quiz_id)) %}
+              <td class="px-md py-sm text-center">
+                {% if sc is none %}<span class="text-on-surface-variant/50">—</span>
+                {% else %}<span class="font-geist font-bold">{{ sc }}</span>{% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+        {% if not students %}
+          <tr><td colspan="99" class="px-md py-md text-center text-on-surface-variant">No students enrolled yet.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="space-y-md">
+    <section>
+      <h2 class="font-geist text-headline-sm text-on-surface dark:text-inverse-on-surface mb-sm">Assignments</h2>
+      {% if my_grades %}
+        <div class="space-y-base">
+        {% for g in my_grades %}
+          <div class="p-md rounded-lg bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="font-inter text-body-md text-on-surface dark:text-inverse-on-surface">{{ g.assignment_title }}</p>
+                <p class="font-geist text-label-sm text-on-surface-variant">
+                  Submitted {{ g.submitted_at.strftime('%b %d, %Y') }}
+                  {% if g.graded_at %} · Graded {{ g.graded_at.strftime('%b %d, %Y') }}{% endif %}
+                </p>
+              </div>
+              <div class="text-right">
+                {% if g.grade is none %}
+                  <span class="px-md py-base rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant font-geist text-label-sm">Pending</span>
+                {% else %}
+                  <p class="font-geist text-headline-md text-primary">{{ g.grade }}<span class="text-on-surface-variant/70 text-headline-sm">/{{ g.max_marks }}</span></p>
+                {% endif %}
+              </div>
+            </div>
+            {% if g.feedback %}<p class="font-inter text-body-sm text-on-surface-variant mt-base p-base bg-surface-container-low dark:bg-inverse-surface rounded-md">{{ g.feedback }}</p>{% endif %}
+          </div>
+        {% endfor %}
+        </div>
+      {% else %}<p class="font-inter text-body-md text-on-surface-variant">No submissions yet.</p>{% endif %}
+    </section>
+
+    <section>
+      <h2 class="font-geist text-headline-sm text-on-surface dark:text-inverse-on-surface mb-sm">Quizzes</h2>
+      {% if my_quizzes %}
+        <div class="space-y-base">
+        {% for q in my_quizzes %}
+          <div class="p-md rounded-lg bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card flex justify-between items-center">
+            <p class="font-inter text-body-md text-on-surface dark:text-inverse-on-surface">{{ q.title }}</p>
+            {% if q.score is none %}
+              <span class="px-md py-base rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant font-geist text-label-sm">Pending</span>
+            {% else %}
+              <p class="font-geist text-headline-sm text-primary">{{ q.score }}<span class="text-on-surface-variant/70 text-label-md">/{{ q.total_marks }}</span></p>
+            {% endif %}
+          </div>
+        {% endfor %}
+        </div>
+      {% else %}<p class="font-inter text-body-md text-on-surface-variant">No quizzes yet.</p>{% endif %}
+    </section>
+  </div>
+{% endif %}
+{% endblock %}

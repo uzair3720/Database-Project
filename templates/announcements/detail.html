@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}{{ ann.title }} · LMP{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto space-y-md">
+  <div class="flex items-center gap-xs">
+    <a href="{{ url_for('courses.detail', course_id=ann.course_id) }}"
+       class="p-2 rounded-full hover:bg-surface-container">
+      <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <p class="font-geist text-label-md text-on-surface-variant">{{ ann.course_name }}</p>
+  </div>
+
+  <article class="p-md md:p-lg rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card">
+    {% set pi = (ann.poster_name.split()|map('first')|join('')|upper)[:2] %}
+    <div class="flex items-center justify-between gap-sm flex-wrap">
+      <div class="flex items-center gap-xs">
+        <div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-geist text-label-md">{{ pi }}</div>
+        <div>
+          <p class="font-inter text-body-md text-on-surface dark:text-inverse-on-surface">{{ ann.poster_name }}</p>
+          <p class="font-geist text-label-sm text-on-surface-variant">{{ ann.posted_at.strftime('%b %d, %Y · %H:%M') }}</p>
+        </div>
+      </div>
+      {% if ann.instructor_id == session.get('user_id') %}
+        <a href="{{ url_for('announcements.edit', announcement_id=ann.announcement_id) }}"
+           class="px-md py-sm rounded-lg bg-surface-container-high text-on-surface font-geist text-label-md flex items-center gap-xs hover:shadow-card">
+          <span class="material-symbols-outlined text-[18px]">edit</span> Edit
+        </a>
+      {% endif %}
+    </div>
+
+    <h1 class="font-geist text-headline-lg text-on-surface dark:text-inverse-on-surface mt-md">{{ ann.title }}</h1>
+    <p class="font-inter text-body-md text-on-surface dark:text-inverse-on-surface mt-sm whitespace-pre-wrap leading-relaxed">{{ ann.content }}</p>
+  </article>
+
+  <section>
+    <h2 class="font-geist text-headline-sm text-on-surface dark:text-inverse-on-surface mb-sm">
+      Comments <span class="text-on-surface-variant/70 font-normal">({{ comments_list|length }})</span>
+    </h2>
+
+    <div class="space-y-base mb-sm">
+      {% for c in comments_list %}
+        {% set ci = (c.poster_name.split()|map('first')|join('')|upper)[:2] %}
+        <div class="p-sm rounded-lg bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/30 flex items-start gap-xs">
+          <div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-geist text-label-sm">{{ ci }}</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-xs">
+              <p class="font-inter text-body-sm text-on-surface dark:text-inverse-on-surface font-medium">{{ c.poster_name }}</p>
+              <p class="font-geist text-label-sm text-on-surface-variant">{{ c.posted_at.strftime('%b %d · %H:%M') }}</p>
+            </div>
+            <p class="font-inter text-body-md text-on-surface dark:text-inverse-on-surface mt-base whitespace-pre-wrap">{{ c.content }}</p>
+          </div>
+          {% if c.user_id == session.get('user_id') %}
+            <form action="{{ url_for('comments.delete', comment_id=c.comment_id) }}" method="post"
+                  onsubmit="return confirm('Delete this comment?');">
+              <button class="text-outline hover:text-error transition" title="Delete comment">
+                <span class="material-symbols-outlined text-[18px]">delete</span>
+              </button>
+            </form>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <form action="{{ url_for('comments.on_announcement', announcement_id=ann.announcement_id) }}" method="post"
+          class="flex items-start gap-xs">
+      <textarea name="content" rows="2" required placeholder="Add a class comment…"
+                class="flex-1 px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0 outline-none font-inter text-body-md"></textarea>
+      <button class="px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-geist text-label-md hover:shadow-hover transition">Post</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

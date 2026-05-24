@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}New Course · LMP{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+  <h1 class="font-geist text-headline-lg text-on-surface dark:text-inverse-on-surface mb-md">Create a course</h1>
+  <form action="{{ url_for('courses.create') }}" method="post"
+        class="p-md rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card space-y-sm">
+    <div class="space-y-base">
+      <label class="font-geist text-label-sm text-on-surface-variant block">Course name</label>
+      <input name="course_name" required placeholder="Data Structures"
+             class="w-full px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0 outline-none font-inter text-body-md" />
+    </div>
+    <div class="space-y-base">
+      <label class="font-geist text-label-sm text-on-surface-variant block">Course code <span class="text-on-surface-variant/60">(optional, e.g. CS2001)</span></label>
+      <input name="course_code" maxlength="20" placeholder="CS2001"
+             class="w-full px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0 outline-none font-inter text-body-md uppercase tracking-wider" />
+    </div>
+    <div class="space-y-base">
+      <label class="font-geist text-label-sm text-on-surface-variant block">Description</label>
+      <textarea name="course_description" rows="4" placeholder="Brief overview…"
+                class="w-full px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0 outline-none font-inter text-body-md"></textarea>
+    </div>
+    <div class="flex justify-end gap-xs pt-base">
+      <a href="{{ url_for('courses.my_courses') }}" class="px-md py-sm rounded-lg font-geist text-label-md text-on-surface-variant hover:bg-surface-container">Cancel</a>
+      <button class="px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-geist text-label-md hover:shadow-hover active:scale-[0.98] transition-all">Create course</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

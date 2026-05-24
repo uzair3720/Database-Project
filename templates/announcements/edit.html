@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Edit Post · LMP{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto space-y-md">
+  <h1 class="font-geist text-headline-lg text-on-surface dark:text-inverse-on-surface">Edit post</h1>
+
+  <form action="{{ url_for('announcements.edit', announcement_id=a.announcement_id) }}" method="post"
+        class="p-md rounded-xl bg-surface-container-lowest dark:bg-[#1d2123] border border-outline-variant/40 shadow-card space-y-sm">
+    <div class="space-y-base">
+      <label class="font-geist text-label-sm text-on-surface-variant block">Title</label>
+      <input name="title" value="{{ a.title }}" required
+             class="w-full px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0 outline-none font-inter text-body-md" />
+    </div>
+    <div class="space-y-base">
+      <label class="font-geist text-label-sm text-on-surface-variant block">Body</label>
+      <textarea name="content" rows="8" required
+                class="w-full px-md py-sm rounded-lg bg-surface-container-low dark:bg-inverse-surface border-transparent focus:bg-white dark:focus:bg-[#14181b] focus:border-primary focus:ring-0 outline-none font-inter text-body-md">{{ a.content }}</textarea>
+    </div>
+    <div class="flex justify-end gap-xs pt-base">
+      <a href="{{ url_for('announcements.detail', announcement_id=a.announcement_id) }}" class="px-md py-sm rounded-lg font-geist text-label-md text-on-surface-variant hover:bg-surface-container">Cancel</a>
+      <button class="px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-geist text-label-md hover:shadow-hover active:scale-[0.98] transition-all">Save changes</button>
+    </div>
+  </form>
+
+  <form action="{{ url_for('announcements.delete', announcement_id=a.announcement_id) }}" method="post"
+        onsubmit="return confirm('Delete this post and all its comments?');"
+        class="p-md rounded-xl bg-error-container/30 border border-error/30">
+    <h2 class="font-geist text-headline-sm text-on-error-container">Danger zone</h2>
+    <p class="font-inter text-body-sm text-on-error-container/80 mt-base mb-sm">Comments under this post will also be removed.</p>
+    <button class="px-md py-sm bg-error text-on-error rounded-lg font-geist text-label-md hover:opacity-90 transition">Delete post</button>
+  </form>
+</div>
+{% endblock %}
